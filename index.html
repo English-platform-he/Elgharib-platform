@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرس اللغة الإنجليزية - التعليم التفاعلي</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-dark: #1e3a8a;
+            --primary-blue: #3b82f6;
+            --primary-purple: #7c3aed;
+            --light-purple: #a78bfa;
+            --light-blue: #93c5fd;
+            --light-gray: #f8fafc;
+            --dark-text: #1e293b;
+            --light-text: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            color: var(--dark-text);
+            background-color: #f9fafb;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main-content {
+            flex: 1;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'El Messiri', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-purple) 100%);
+            box-shadow: var(--shadow-lg);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-family: 'El Messiri', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(30, 58, 138, 0.9), rgba(124, 58, 237, 0.9)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 50px;
+        }
+
+        /* Cards */
+        .stage-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            height: 100%;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stage-card .card-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .lesson-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .lesson-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Comments */
+        .comment-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 0;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Admin Dashboard */
+        .admin-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .admin-card .card-header {
+            background-color: var(--primary-dark);
+            color: white;
+            font-weight: 700;
+            border: none;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* HTML Lesson Container */
+        .html-lesson-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .html-lesson-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Site status */
+        .site-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-cloud {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.5rem;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-right: 4px solid var(--primary-blue);
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast.success {
+            border-right-color: var(--success);
+        }
+        
+        .toast.error {
+            border-right-color: var(--danger);
+        }
+        
+        .toast.warning {
+            border-right-color: var(--warning);
+        }
+        
+        /* Cloud status */
+        .cloud-status {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .cloud-status.disconnected {
+            background: rgba(239, 68, 68, 0.9);
+        }
+        
+        /* Preview Images */
+        .preview-image {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .preview-placeholder {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+            color: #6c757d;
+        }
+        
+        /* File Upload */
+        .file-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-container:hover {
+            border-color: var(--primary-blue);
+            background-color: #e7f1ff;
+        }
+        
+        .file-upload-container.dragover {
+            border-color: var(--primary-blue);
+            background-color: #e7f1ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loadingText">جاري تحميل النظام...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Cloud Status -->
+    <div id="cloudStatus" class="cloud-status" style="display: none;">
+        <i class="bi bi-cloud"></i> <span id="cloudStatusText">متصل بالسحابة</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-translate me-2"></i>
+                <span id="site-title">منصة الغريب التعليمية</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#stages">المراحل الدراسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">عن المدرس</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="admin-login-link">لوحة التحكم</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">تعلم اللغة الإنجليزية بسهولة وفعالية</h1>
+                    <p class="lead mb-4">مرحباً بكم في منصة تعليم اللغة الإنجليزية التفاعلية. نقدم لكم محتوى تعليمي متكامل لجميع المراحل الدراسية مع دروس تفاعلية سرعة ودقة وأمان.</p>
+                    <a href="#stages" class="btn btn-primary btn-lg">استعرض المراحل الدراسية</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="logo-container text-center">
+                        <img id="site-logo" src="data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='%233b82f6'/%3e%3ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='24' font-family='Arial'%3eEN%3c/text%3e%3c/svg%3e" alt="شعار الموقع" class="img-fluid" style="max-width: 200px;">
+                    </div>
+                    <p class="text-center mt-2" id="site-status-display">
+                        <span class="site-status status-cloud">
+                            <i class="bi bi-cloud-check"></i> متصل بالسحابة
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container" id="main-content">
+        <!-- Stages Section -->
+        <section id="stages" class="mb-5">
+            <h2 class="text-center mb-5">المراحل الدراسية</h2>
+            <div class="row" id="stages-container">
+                <!-- Stages will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Lessons Section -->
+        <section id="lessons" class="mb-5" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 id="stage-title"></h2>
+                <button class="btn btn-outline-primary" id="back-to-stages">
+                    <i class="bi bi-arrow-right"></i> العودة إلى المراحل
+                </button>
+            </div>
+            <div id="units-container">
+                <!-- Units and lessons will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Lesson Content Section -->
+        <section id="lesson-content" class="mb-5" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 id="lesson-title"></h2>
+                <button class="btn btn-outline-primary" id="back-to-lessons">
+                    <i class="bi bi-arrow-right"></i> العودة إلى الدروس
+                </button>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <!-- HTML Lesson Container -->
+                            <div id="html-lesson-container" class="html-lesson-container" style="display: none;">
+                                <iframe id="html-lesson-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+                            </div>
+                            
+                            <!-- Video Container -->
+                            <div id="video-container" class="video-container" style="display: none;"></div>
+                            
+                            <!-- Text Content Container -->
+                            <div id="text-content-container" style="display: none;">
+                                <div id="video-placeholder" class="video-container">
+                                    <div class="d-flex justify-content-center align-items-center h-100 bg-light">
+                                        <div class="text-center">
+                                            <i class="bi bi-play-circle display-1 text-muted"></i>
+                                            <p class="mt-3">سيظهر محتوى الدرس هنا عند إضافته من قبل المدير</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="lesson-description" class="mt-4"></div>
+                            </div>
+                            
+                            <!-- External Link Button -->
+                            <div id="external-link-container" class="text-center mt-4" style="display: none;">
+                                <a id="external-link-btn" href="#" target="_blank" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-box-arrow-up-right me-2"></i> عرض الدرس الكامل
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <button class="btn btn-outline-success like-btn" id="like-btn">
+                                        <i class="bi bi-hand-thumbs-up"></i> <span id="like-count">0</span>
+                                    </button>
+                                    <button class="btn btn-outline-danger dislike-btn" id="dislike-btn">
+                                        <i class="bi bi-hand-thumbs-down"></i> <span id="dislike-count">0</span>
+                                    </button>
+                                </div>
+                                <div class="text-muted" id="lesson-stats">
+                                    <small>تمت إضافة الدرس في: <span id="lesson-date">غير محدد</span></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="comment-section">
+                        <h4 class="mb-4">التعليقات</h4>
+                        <form id="comment-form">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="comment-author" placeholder="اسمك" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" id="comment-text" rows="3" placeholder="اكتب تعليقك هنا..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">إضافة تعليق</button>
+                        </form>
+                        <div id="comments-list" class="mt-4">
+                            <p class="text-center text-muted">لا توجد تعليقات بعد. كن أول من يعلق!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div id="teacher-image-container" class="text-center">
+                        <div id="teacher-image-placeholder" class="d-flex flex-column justify-content-center align-items-center bg-light rounded" style="height: 400px; width: 100%;">
+                            <i class="bi bi-person-circle display-1 text-muted"></i>
+                            <p class="mt-3">سيتم عرض صورة المدرس هنا</p>
+                        </div>
+                        <img id="teacher-image" src="" alt="صورة المدرس" class="img-fluid rounded" style="display: none; max-height: 400px; object-fit: cover; width: 100%;">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="mb-4">عن المدرس</h2>
+                    <div id="teacher-description">
+                        <p class="mb-4">مرحباً، أنا <span id="teacher-name">محمد أحمد</span>، مدرس لغة إنجليزية مع أكثر من 10 سنوات من الخبرة.</p>
+                        <p class="mb-4" id="teacher-qualifications">حاصل على شهادة الماجستير في اللغويات التطبيقية.</p>
+                        <p class="mb-4" id="teacher-bio"></p>
+                        <p class="mb-4" id="teacher-goal">هدفي هو جعل تعلم اللغة الإنجليزية تجربة ممتعة وفعالة للجميع.</p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-4">
+                            <h3 class="text-primary">12</h3>
+                            <p>مرحلة دراسية</p>
+                        </div>
+                        <div class="me-4">
+                            <h3 class="text-primary" id="total-lessons-display">0</h3>
+                            <p>درس متاح</p>
+                        </div>
+                        <div>
+                            <h3 class="text-primary">10+</h3>
+                            <p>سنوات خبرة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content login-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">تسجيل الدخول إلى لوحة التحكم</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="admin-password" class="form-label">كلمة المرور</label>
+                            <input type="password" class="form-control" id="admin-password" required>
+                            <div class="form-text">كلمة المرور الافتراضية: admin123</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="container py-5" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2>لوحة تحكم المدير</h2>
+            <div>
+                <button class="btn btn-outline-danger me-2" id="logout-btn">تسجيل الخروج</button>
+                <button class="btn btn-outline-primary" id="back-to-site">العودة إلى الموقع</button>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mb-4">
+            <h5><i class="bi bi-cloud-check me-2"></i> النظام يعمل على السحابة</h5>
+            <p class="mb-0">جميع التغييرات التي تقوم بها ستظهر لجميع المستخدمين فوراً.</p>
+            <p class="mb-0 mt-2"><strong>حالة الاتصال:</strong> <span id="connection-status">جاري التحميل...</span></p>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="admin-card card">
+                    <div class="card-header">إحصائيات الموقع</div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="total-lessons">0</h5>
+                        <p class="card-text">درس متاح</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-card card">
+                    <div class="card-header">إجمالي التعليقات</div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="total-comments">0</h5>
+                        <p class="card-text">تعليق</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-card card">
+                    <div class="card-header">إجمالي الإعجابات</div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="total-likes">0</h5>
+                        <p class="card-text">إعجاب</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-card card">
+                    <div class="card-header">حالة الموقع</div>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="site-availability" checked>
+                            <label class="form-check-label" for="site-availability">متاح</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="admin-card card mb-4">
+                    <div class="card-header">إضافة / تعديل درس</div>
+                    <div class="card-body">
+                        <form id="lesson-form">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="admin-stage" class="form-label">المرحلة</label>
+                                    <select class="form-select" id="admin-stage" required>
+                                        <!-- Options will be populated -->
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="admin-unit" class="form-label">الوحدة</label>
+                                    <select class="form-select" id="admin-unit" required>
+                                        <option value="1">الوحدة 1</option>
+                                        <option value="2">الوحدة 2</option>
+                                        <option value="3">الوحدة 3</option>
+                                        <option value="4">الوحدة 4</option>
+                                        <option value="5">الوحدة 5</option>
+                                        <option value="6">الوحدة 6</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="admin-lesson" class="form-label">الدرس</label>
+                                    <select class="form-select" id="admin-lesson" required>
+                                        <option value="1">الدرس 1</option>
+                                        <option value="2">الدرس 2</option>
+                                        <option value="3">الدرس 3</option>
+                                        <option value="4">الدرس 4</option>
+                                        <option value="5">الدرس 5</option>
+                                        <option value="6">الدرس 6</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lesson-title-input" class="form-label">عنوان الدرس</label>
+                                <input type="text" class="form-control" id="lesson-title-input" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="youtube-url" class="form-label">رابط فيديو YouTube (اختياري)</label>
+                                <input type="text" class="form-control" id="youtube-url" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="lesson-description-input" class="form-label">وصف الدرس</label>
+                                <textarea class="form-control" id="lesson-description-input" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="external-link" class="form-label">رابط خارجي للدرس (اختياري)</label>
+                                <input type="text" class="form-control" id="external-link" placeholder="https://...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">رفع ملف HTML كامل للدرس (اختياري)</label>
+                                <div class="file-upload-container" id="html-file-upload-container">
+                                    <i class="bi bi-file-earmark-code display-4 text-muted mb-3"></i>
+                                    <p>اسحب وأفلت ملف HTML هنا<br>أو انقر للاختيار</p>
+                                    <small class="text-muted">يدعم ملفات HTML مع CSS و JS</small>
+                                    <input type="file" class="d-none" id="html-file" accept=".html,.zip">
+                                </div>
+                                <div id="html-file-info" class="mt-2" style="display: none;">
+                                    <div class="alert alert-success d-flex align-items-center justify-content-between">
+                                        <span><i class="bi bi-file-earmark-check me-2"></i> <span id="html-file-name">file.html</span></span>
+                                        <button type="button" class="btn-close" id="remove-html-file"></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">حفظ الدرس في السحابة</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="admin-card card mb-4">
+                    <div class="card-header">إدارة الملفات والصور</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- تعديل الشعار -->
+                            <div class="col-md-6 mb-4">
+                                <h5>شعار الموقع</h5>
+                                <div class="mb-3">
+                                    <div id="logo-preview" class="text-center mb-2">
+                                        <div id="logo-preview-placeholder" class="preview-placeholder">
+                                            <i class="bi bi-image display-4"></i>
+                                            <small class="mt-2">لا يوجد شعار</small>
+                                        </div>
+                                        <img id="logo-preview-img" src="" alt="شعار الموقع" class="preview-image" style="display: none;">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="logo-upload" accept="image/*">
+                                        <button class="btn btn-outline-primary" type="button" id="upload-logo-btn">رفع</button>
+                                    </div>
+                                    <small class="form-text text-muted">الحجم الموصى به: 200x200 بكسل</small>
+                                </div>
+                            </div>
+                            
+                            <!-- تعديل صورة المدرس -->
+                            <div class="col-md-6 mb-4">
+                                <h5>صورة المدرس</h5>
+                                <div class="mb-3">
+                                    <div id="teacher-image-preview" class="text-center mb-2">
+                                        <div id="teacher-image-preview-placeholder" class="preview-placeholder">
+                                            <i class="bi bi-person-circle display-4"></i>
+                                            <small class="mt-2">لا توجد صورة</small>
+                                        </div>
+                                        <img id="teacher-image-preview-img" src="" alt="صورة المدرس" class="preview-image" style="display: none;">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="teacher-image-upload" accept="image/*">
+                                        <button class="btn btn-outline-primary" type="button" id="upload-teacher-image-btn">رفع</button>
+                                    </div>
+                                    <small class="form-text text-muted">الحجم الموصى به: 400x400 بكسل</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="admin-card card mb-4">
+                    <div class="card-header">إعدادات الموقع</div>
+                    <div class="card-body">
+                        <form id="site-settings-form">
+                            <div class="mb-3">
+                                <label for="site-title-input" class="form-label">عنوان الموقع</label>
+                                <input type="text" class="form-control" id="site-title-input" value="مدرس اللغة الإنجليزية">
+                            </div>
+                            <div class="mb-3">
+                                <label for="admin-password-input" class="form-label">تغيير كلمة المرور</label>
+                                <input type="password" class="form-control" id="admin-password-input" placeholder="كلمة مرور جديدة">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">حفظ الإعدادات في السحابة</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="admin-card card mb-4">
+                    <div class="card-header">معلومات المدرس</div>
+                    <div class="card-body">
+                        <form id="teacher-info-form">
+                            <div class="mb-3">
+                                <label for="teacher-name-input" class="form-label">اسم المدرس</label>
+                                <input type="text" class="form-control" id="teacher-name-input" value="محمد أحمد">
+                            </div>
+                            <div class="mb-3">
+                                <label for="teacher-qualifications-input" class="form-label">المؤهلات</label>
+                                <textarea class="form-control" id="teacher-qualifications-input" rows="2">حاصل على شهادة الماجستير في اللغويات التطبيقية.</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="teacher-bio-input" class="form-label">السيرة الذاتية (اختياري)</label>
+                                <textarea class="form-control" id="teacher-bio-input" rows="3" placeholder="أدخل سيرة المدرس الذاتية..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="teacher-goal-input" class="form-label">الهدف التعليمي</label>
+                                <textarea class="form-control" id="teacher-goal-input" rows="2">هدفي هو جعل تعلم اللغة الإنجليزية تجربة ممتعة وفعالة للجميع.</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">حفظ معلومات المدرس</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="admin-card card">
+                    <div class="card-header">إدارة البيانات</div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" id="export-data-btn">تصدير البيانات</button>
+                            <button class="btn btn-outline-success" id="import-data-btn">استيراد البيانات</button>
+                            <input type="file" id="data-file-input" accept=".json" style="display: none;">
+                        </div>
+                        <div class="mt-3">
+                            <p class="text-muted small">جميع التغييرات تحفظ تلقائياً في سحابة Firebase.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 id="footer-site-title">مدرس اللغة الإنجليزية</h5>
+                    <p>منصة تعليمية متكاملة لتعليم اللغة الإنجليزية لجميع المراحل الدراسية.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>جميع الحقوق محفوظة &copy; <span id="current-year">2026</span></p>
+                    <p id="footer-site-status"></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    
+    <!-- JavaScript Code -->
+    <script>
+        // ============================================
+        // Firebase Configuration
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDyfB9au_lfEfLGGhRXCZjFQ1y4KHyOHLE",
+            authDomain: "english-teacher-app-e7bd2.firebaseapp.com",
+            databaseURL: "https://english-teacher-app-e7bd2-default-rtdb.firebaseio.com",
+            projectId: "english-teacher-app-e7bd2",
+            storageBucket: "english-teacher-app-e7bd2.firebasestorage.app",
+            messagingSenderId: "198770334674",
+            appId: "1:198770334674:web:cad0b08e9da089d567c60b"
+        };
+
+        // ============================================
+        // تطبيق نظام مدرس اللغة الإنجليزية مع Firebase
+        // ============================================
+        class EnglishTeacherSystem {
+            constructor() {
+                this.state = {
+                    stages: [],
+                    lessons: {},
+                    comments: {},
+                    likes: {},
+                    siteSettings: {
+                        title: "مدرس اللغة الإنجليزية",
+                        password: "admin123",
+                        logo: "",
+                        logoUrl: "",
+                        isAvailable: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    teacherInfo: {
+                        name: "محمد أحمد",
+                        image: "",
+                        imageUrl: "",
+                        qualifications: "حاصل على شهادة الماجستير في اللغويات التطبيقية وشهادات تدريس اللغة الإنجليزية كلغة أجنبية (TEFL و TESOL).",
+                        bio: "",
+                        goal: "هدفي هو جعل تعلم اللغة الإنجليزية تجربة ممتعة وفعالة للجميع من خلال توفير محتوى تعليمي عالي الجودة يناسب جميع المستويات."
+                    }
+                };
+                
+                this.current = {
+                    stage: null,
+                    unit: null,
+                    lesson: null
+                };
+                
+                this.ui = {
+                    isAdmin: false,
+                    isLoading: true
+                };
+                
+                this.firebase = null;
+                this.database = null;
+                this.storage = null;
+                this.siteId = null;
+                this.isConnected = false;
+                this.uploadingFile = null;
+            }
+            
+            async initialize() {
+                try {
+                    this.showLoading('جاري تحميل النظام...');
+                    
+                    // Initialize Firebase
+                    await this.initializeFirebase();
+                    
+                    // Setup event listeners
+                    this.setupEventListeners();
+                    
+                    // Initialize UI
+                    await this.initializeUI();
+                    
+                    // Hide loading
+                    setTimeout(() => {
+                        this.hideLoading();
+                        this.showToast('مرحباً بك في نظام مدرس اللغة الإنجليزية!', 'success');
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    this.hideLoading();
+                    this.showToast('حدث خطأ في تحميل النظام', 'error');
+                }
+            }
+            
+            async initializeFirebase() {
+                try {
+                    // Initialize Firebase
+                    const app = firebase.initializeApp(firebaseConfig);
+                    this.database = firebase.database(app);
+                    this.storage = firebase.storage(app);
+                    
+                    // Get or create site ID
+                    this.siteId = await this.getSiteId();
+                    
+                    // Setup connection listener
+                    this.setupConnectionListener();
+                    
+                    // Load data from Firebase
+                    await this.loadFromFirebase();
+                    
+                    // Setup real-time listener
+                    this.setupRealtimeListener();
+                    
+                } catch (error) {
+                    console.error('Firebase initialization error:', error);
+                    this.showCloudStatus('غير متصل', false);
+                    
+                    // Fallback to localStorage
+                    await this.loadFromLocalStorage();
+                    this.showToast('يتم العمل محلياً، يمكنك رفع البيانات لاحقاً', 'warning');
+                }
+            }
+            
+            async getSiteId() {
+                let siteId = localStorage.getItem('english_teacher_site_id');
+                
+                if (!siteId) {
+                    siteId = 'site_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('english_teacher_site_id', siteId);
+                }
+                
+                return siteId;
+            }
+            
+            setupConnectionListener() {
+                const connectedRef = this.database.ref(".info/connected");
+                connectedRef.on("value", (snap) => {
+                    if (snap.val() === true) {
+                        this.isConnected = true;
+                        this.showCloudStatus('متصل بالسحابة', true);
+                        if (document.getElementById('connection-status')) {
+                            document.getElementById('connection-status').textContent = 'متصل';
+                        }
+                        
+                        // محاولة مزامنة البيانات المحلية مع السحابة عند الاتصال
+                        this.syncLocalData();
+                    } else {
+                        this.isConnected = false;
+                        this.showCloudStatus('غير متصل', false);
+                        if (document.getElementById('connection-status')) {
+                            document.getElementById('connection-status').textContent = 'غير متصل';
+                        }
+                    }
+                });
+            }
+            
+            async loadFromFirebase() {
+                try {
+                    const snapshot = await this.database.ref(`sites/${this.siteId}`).once('value');
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        this.state = { ...this.state, ...data };
+                        this.showToast('تم تحميل البيانات من السحابة', 'success');
+                    } else {
+                        // Create initial data in Firebase
+                        await this.createInitialData();
+                    }
+                    
+                    // Initialize stages if empty
+                    if (this.state.stages.length === 0) {
+                        await this.initializeStages();
+                        await this.saveToFirebase();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading from Firebase:', error);
+                    throw error;
+                }
+            }
+            
+            async createInitialData() {
+                const initialData = {
+                    stages: [],
+                    lessons: {},
+                    comments: {},
+                    likes: {},
+                    siteSettings: {
+                        title: "مدرس اللغة الإنجليزية",
+                        password: "admin123",
+                        logo: "",
+                        logoUrl: "",
+                        isAvailable: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    teacherInfo: {
+                        name: "محمد أحمد",
+                        image: "",
+                        imageUrl: "",
+                        qualifications: "حاصل على شهادة الماجستير في اللغويات التطبيقية وشهادات تدريس اللغة الإنجليزية كلغة أجنبية (TEFL و TESOL).",
+                        bio: "",
+                        goal: "هدفي هو جعل تعلم اللغة الإنجليزية تجربة ممتعة وفعالة للجميع من خلال توفير محتوى تعليمي عالي الجودة يناسب جميع المستويات."
+                    }
+                };
+                
+                await this.database.ref(`sites/${this.siteId}`).set(initialData);
+            }
+            
+            setupRealtimeListener() {
+                // الاستماع للتغييرات على البيانات الرئيسية
+                this.database.ref(`sites/${this.siteId}`).on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        console.log('Firebase update received:', data);
+                        
+                        // تحديث state مع الحفاظ على البيانات المحلية الحالية
+                        this.state = { ...this.state, ...data };
+                        this.updateUI();
+                    }
+                }, (error) => {
+                    console.error('Firebase listener error:', error);
+                });
+            }
+            
+            async syncLocalData() {
+                // عند استعادة الاتصال، نحاول مزامنة البيانات المحلية مع السحابة
+                const localData = localStorage.getItem('english_teacher_data');
+                if (localData && this.isConnected) {
+                    try {
+                        const parsed = JSON.parse(localData);
+                        // يمكن هنا إضافة منطق للمزامنة الذكية
+                        this.showToast('جاري مزامنة البيانات مع السحابة...', 'info');
+                        await this.saveToFirebase();
+                    } catch (error) {
+                        console.error('Error syncing data:', error);
+                    }
+                }
+            }
+            
+            async loadFromLocalStorage() {
+                const savedData = localStorage.getItem('english_teacher_data');
+                if (savedData) {
+                    try {
+                        const parsed = JSON.parse(savedData);
+                        this.state = { ...this.state, ...parsed };
+                    } catch (e) {
+                        console.error('Error parsing saved data:', e);
+                    }
+                }
+                
+                // Initialize stages if empty
+                if (this.state.stages.length === 0) {
+                    await this.initializeStages();
+                    await this.saveToLocalStorage();
+                }
+            }
+            
+            async initializeStages() {
+                const stages = [];
+                for (let i = 1; i <= 12; i++) {
+                    let stageName = "";
+                    let stageType = "";
+                    
+                    if (i <= 6) {
+                        stageName = `المرحلة الابتدائية - الصف ${i}`;
+                        stageType = "primary";
+                    } else if (i <= 9) {
+                        stageName = `المرحلة الإعدادية - الصف ${i-6}`;
+                        stageType = "middle";
+                    } else {
+                        stageName = `المرحلة الثانوية - الصف ${i-9}`;
+                        stageType = "secondary";
+                    }
+                    
+                    stages.push({
+                        id: i,
+                        name: stageName,
+                        type: stageType,
+                        description: `مرحلة تعليمية متكاملة للغة الإنجليزية`,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                
+                this.state.stages = stages;
+            }
+            
+            async saveToFirebase() {
+                try {
+                    if (!this.isConnected) {
+                        throw new Error('No connection to Firebase');
+                    }
+                    
+                    console.log('Saving to Firebase:', this.state);
+                    await this.database.ref(`sites/${this.siteId}`).set(this.state);
+                    console.log('Successfully saved to Firebase');
+                    return true;
+                } catch (error) {
+                    console.error('Error saving to Firebase:', error);
+                    throw error;
+                }
+            }
+            
+            async saveToLocalStorage() {
+                try {
+                    localStorage.setItem('english_teacher_data', JSON.stringify(this.state));
+                    return true;
+                } catch (error) {
+                    console.error('Error saving to localStorage:', error);
+                    return false;
+                }
+            }
+            
+            async saveData() {
+                try {
+                    if (this.isConnected) {
+                        await this.saveToFirebase();
+                        this.showToast('تم حفظ البيانات في السحابة', 'success');
+                    }
+                    
+                    // حفظ نسخة محلية أيضاً
+                    await this.saveToLocalStorage();
+                    
+                    return true;
+                } catch (error) {
+                    this.showToast('فشل في حفظ البيانات', 'error');
+                    return false;
+                }
+            }
+            
+            setupEventListeners() {
+                // Navigation
+                document.getElementById('admin-login-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showLoginModal();
+                });
+                
+                document.getElementById('logout-btn')?.addEventListener('click', () => {
+                    this.handleLogout();
+                });
+                
+                document.getElementById('back-to-site')?.addEventListener('click', () => {
+                    this.showMainSite();
+                });
+                
+                document.getElementById('back-to-stages').addEventListener('click', () => {
+                    this.showStages();
+                });
+                
+                document.getElementById('back-to-lessons').addEventListener('click', () => {
+                    this.showLessons();
+                });
+                
+                // Forms
+                document.getElementById('login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin(e);
+                });
+                
+                document.getElementById('comment-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addComment(e);
+                });
+                
+                // تعديل: استخدام transaction للتعامل مع الإعجابات
+                document.getElementById('like-btn').addEventListener('click', () => {
+                    this.handleLikeDislikeTransaction('like');
+                });
+                
+                document.getElementById('dislike-btn').addEventListener('click', () => {
+                    this.handleLikeDislikeTransaction('dislike');
+                });
+                
+                // Admin forms
+                document.getElementById('lesson-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveLesson(e);
+                });
+                
+                document.getElementById('site-settings-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveSiteSettings(e);
+                });
+                
+                document.getElementById('teacher-info-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveTeacherInfo(e);
+                });
+                
+                // Admin buttons
+                document.getElementById('site-availability').addEventListener('change', (e) => {
+                    this.toggleSiteAvailability(e);
+                });
+                
+                // File upload
+                document.getElementById('html-file-upload-container').addEventListener('click', () => {
+                    document.getElementById('html-file').click();
+                });
+                
+                document.getElementById('html-file-upload-container').addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.add('dragover');
+                });
+                
+                document.getElementById('html-file-upload-container').addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.remove('dragover');
+                });
+                
+                document.getElementById('html-file-upload-container').addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        document.getElementById('html-file').files = files;
+                        this.handleHtmlFileSelect();
+                    }
+                });
+                
+                document.getElementById('html-file').addEventListener('change', () => {
+                    this.handleHtmlFileSelect();
+                });
+                
+                document.getElementById('remove-html-file').addEventListener('click', () => {
+                    this.removeHtmlFile();
+                });
+                
+                document.getElementById('upload-logo-btn').addEventListener('click', () => {
+                    this.uploadLogo();
+                });
+                
+                document.getElementById('upload-teacher-image-btn').addEventListener('click', () => {
+                    this.uploadTeacherImage();
+                });
+                
+                // Data management
+                document.getElementById('export-data-btn').addEventListener('click', () => {
+                    this.exportData();
+                });
+                
+                document.getElementById('import-data-btn').addEventListener('click', () => {
+                    document.getElementById('data-file-input').click();
+                });
+                
+                document.getElementById('data-file-input').addEventListener('change', (e) => {
+                    this.importData(e);
+                });
+            }
+            
+            async initializeUI() {
+                // Set current year
+                document.getElementById('current-year').textContent = new Date().getFullYear();
+                
+                // Update site title
+                this.updateSiteTitle();
+                
+                // Update teacher info
+                this.updateTeacherInfo();
+                
+                // Update logo and teacher image previews
+                this.updateLogoPreview();
+                this.updateTeacherImagePreview();
+                
+                // Populate stage selects
+                this.populateStageSelects();
+                
+                // Display stages
+                await this.displayStages();
+                
+                // Update statistics
+                this.updateStatistics();
+                
+                // Update site status
+                this.updateSiteStatus();
+            }
+            
+            updateUI() {
+                this.displayStages();
+                this.updateTeacherInfo();
+                this.updateStatistics();
+                this.updateSiteTitle();
+                this.updateLogoPreview();
+                this.updateTeacherImagePreview();
+                
+                if (this.current.lesson) {
+                    this.showLesson(this.current.lesson);
+                }
+            }
+            
+            async displayStages() {
+                const stagesContainer = document.getElementById('stages-container');
+                if (!stagesContainer) return;
+                
+                stagesContainer.innerHTML = '';
+                
+                if (!this.state.siteSettings.isAvailable && !this.ui.isAdmin) {
+                    stagesContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-warning text-center">
+                                <h4>الموقع غير متاح حاليًا</h4>
+                                <p>يرجى المحاولة مرة أخرى لاحقًا</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.state.stages.forEach(stage => {
+                    const stageCol = document.createElement('div');
+                    stageCol.className = 'col-md-4 col-lg-3 mb-4';
+                    
+                    let lessonCount = 0;
+                    for (let unit = 1; unit <= 6; unit++) {
+                        for (let lesson = 1; lesson <= 6; lesson++) {
+                            const lessonKey = `${stage.id}-${unit}-${lesson}`;
+                            if (this.state.lessons[lessonKey]) {
+                                lessonCount++;
+                            }
+                        }
+                    }
+                    
+                    stageCol.innerHTML = `
+                        <div class="stage-card card" data-stage-id="${stage.id}">
+                            <div class="card-header">
+                                ${stage.name}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">${stage.type === 'primary' ? 'المرحلة الابتدائية' : stage.type === 'middle' ? 'المرحلة الإعدادية' : 'المرحلة الثانوية'}</p>
+                                <div class="mb-2">
+                                    <span class="badge bg-primary me-1">${lessonCount} درس</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-sm btn-outline-primary view-stage-btn">عرض الدروس</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    stagesContainer.appendChild(stageCol);
+                });
+                
+                document.querySelectorAll('.view-stage-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const stageId = parseInt(btn.closest('.stage-card').getAttribute('data-stage-id'));
+                        this.showUnits(stageId);
+                    });
+                });
+                
+                this.updateTotalLessonsDisplay();
+            }
+            
+            showUnits(stageId) {
+                this.current.stage = stageId;
+                const stage = this.state.stages.find(s => s.id === stageId);
+                
+                if (!stage) return;
+                
+                document.getElementById('stage-title').textContent = stage.name;
+                document.getElementById('stages').style.display = 'none';
+                document.getElementById('lessons').style.display = 'block';
+                document.getElementById('lesson-content').style.display = 'none';
+                
+                const unitsContainer = document.getElementById('units-container');
+                unitsContainer.innerHTML = '';
+                
+                for (let unit = 1; unit <= 6; unit++) {
+                    const unitCard = document.createElement('div');
+                    unitCard.className = 'card mb-4';
+                    unitCard.innerHTML = `
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">الوحدة ${unit}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="lessons-unit-${unit}">
+                                <!-- Lessons will be added here -->
+                            </div>
+                        </div>
+                    `;
+                    
+                    unitsContainer.appendChild(unitCard);
+                    
+                    const lessonsContainer = document.getElementById(`lessons-unit-${unit}`);
+                    for (let lesson = 1; lesson <= 6; lesson++) {
+                        const lessonKey = `${stageId}-${unit}-${lesson}`;
+                        const lessonData = this.state.lessons[lessonKey];
+                        const hasLesson = !!lessonData;
+                        
+                        const lessonCol = document.createElement('div');
+                        lessonCol.className = 'col-md-6 col-lg-4 mb-3';
+                        lessonCol.innerHTML = `
+                            <div class="lesson-card card ${hasLesson ? 'border-primary' : ''}" data-lesson-key="${lessonKey}">
+                                <div class="card-body">
+                                    <h6 class="card-title">${hasLesson ? lessonData.title : `الدرس ${lesson}`}</h6>
+                                    <p class="card-text text-muted small">${hasLesson ? (lessonData.description || '').substring(0, 60) + '...' : 'لم يتم إضافة محتوى بعد'}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-${hasLesson ? 'primary' : 'secondary'}">${hasLesson ? 'مضاف' : 'غير مضاف'}</span>
+                                        <button class="btn btn-sm ${hasLesson ? 'btn-primary' : 'btn-outline-primary'} view-lesson-btn">${hasLesson ? 'عرض' : 'إضافة'}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        lessonsContainer.appendChild(lessonCol);
+                    }
+                }
+                
+                document.querySelectorAll('.view-lesson-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const lessonKey = btn.closest('.lesson-card').getAttribute('data-lesson-key');
+                        this.showLesson(lessonKey);
+                    });
+                });
+                
+                document.getElementById('lessons').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            async showLesson(lessonKey) {
+                this.current.lesson = lessonKey;
+                const [stageId, unitId, lessonId] = lessonKey.split('-').map(Number);
+                const stage = this.state.stages.find(s => s.id === stageId);
+                
+                document.getElementById('lesson-title').textContent = `المرحلة: ${stage.name} - الوحدة ${unitId} - الدرس ${lessonId}`;
+                document.getElementById('stages').style.display = 'none';
+                document.getElementById('lessons').style.display = 'none';
+                document.getElementById('lesson-content').style.display = 'block';
+                
+                const lessonData = this.state.lessons[lessonKey];
+                
+                // إخفاء جميع الحاويات أولاً
+                document.getElementById('html-lesson-container').style.display = 'none';
+                document.getElementById('video-container').style.display = 'none';
+                document.getElementById('text-content-container').style.display = 'none';
+                document.getElementById('external-link-container').style.display = 'none';
+                
+                if (lessonData) {
+                    document.getElementById('lesson-title').textContent = lessonData.title;
+                    document.getElementById('lesson-date').textContent = new Date(lessonData.date).toLocaleDateString('ar-EG');
+                    
+                    // التحقق من نوع المحتوى وعرضه
+                    if (lessonData.htmlFileUrl) {
+                        // عرض ملف HTML
+                        const htmlFrame = document.getElementById('html-lesson-frame');
+                        htmlFrame.src = lessonData.htmlFileUrl;
+                        document.getElementById('html-lesson-container').style.display = 'block';
+                        this.showToast('جاري تحميل الدرس التفاعلي...', 'info');
+                    } else if (lessonData.externalLink) {
+                        // عرض رابط خارجي
+                        const externalLinkBtn = document.getElementById('external-link-btn');
+                        externalLinkBtn.href = lessonData.externalLink;
+                        document.getElementById('external-link-container').style.display = 'block';
+                    } else if (lessonData.youtubeUrl) {
+                        // عرض فيديو YouTube
+                        const videoId = this.extractYouTubeId(lessonData.youtubeUrl);
+                        if (videoId) {
+                            const videoContainer = document.getElementById('video-container');
+                            videoContainer.innerHTML = `
+                                <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                        title="درس اللغة الإنجليزية" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                </iframe>
+                            `;
+                            videoContainer.style.display = 'block';
+                        }
+                        document.getElementById('text-content-container').style.display = 'block';
+                    } else {
+                        // عرض النص فقط
+                        document.getElementById('text-content-container').style.display = 'block';
+                    }
+                    
+                    if (lessonData.description) {
+                        document.getElementById('lesson-description').innerHTML = `<p>${lessonData.description}</p>`;
+                    }
+                } else {
+                    document.getElementById('text-content-container').style.display = 'block';
+                    document.getElementById('lesson-description').innerHTML = '<p>سيظهر محتوى الدرس هنا عند إضافته من قبل المدير</p>';
+                    document.getElementById('lesson-date').textContent = 'غير محدد';
+                }
+                
+                this.updateLikesDislikes(lessonKey);
+                await this.loadComments(lessonKey);
+                document.getElementById('lesson-content').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            extractYouTubeId(url) {
+                if (!url) return null;
+                const patterns = [
+                    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+                    /youtube\.com\/v\/([^&\n?#]+)/,
+                    /youtube\.com\/watch\?.*v=([^&\n?#]+)/
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match && match[1]) return match[1];
+                }
+                return null;
+            }
+            
+            updateLikesDislikes(lessonKey) {
+                const likesData = this.state.likes[lessonKey] || { likes: 0, dislikes: 0 };
+                document.getElementById('like-count').textContent = likesData.likes || 0;
+                document.getElementById('dislike-count').textContent = likesData.dislikes || 0;
+            }
+            
+            async loadComments(lessonKey) {
+                const comments = this.state.comments[lessonKey] || [];
+                const commentsList = document.getElementById('comments-list');
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p class="text-center text-muted">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+                    return;
+                }
+                
+                commentsList.innerHTML = '';
+                comments.forEach(comment => {
+                    const commentElement = document.createElement('div');
+                    commentElement.className = 'comment-item';
+                    commentElement.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${comment.author}</h6>
+                                <p class="mb-1">${comment.text}</p>
+                                <small class="text-muted">${new Date(comment.date).toLocaleString('ar-EG')}</small>
+                            </div>
+                        </div>
+                    `;
+                    commentsList.appendChild(commentElement);
+                });
+            }
+            
+            async addComment(e) {
+                e.preventDefault();
+                
+                if (!this.current.lesson) {
+                    this.showToast('الرجاء اختيار درس أولاً', 'warning');
+                    return;
+                }
+                
+                const author = document.getElementById('comment-author').value.trim();
+                const text = document.getElementById('comment-text').value.trim();
+                
+                if (!author || !text) {
+                    this.showToast('الرجاء إدخال اسمك وتعليقك', 'warning');
+                    return;
+                }
+                
+                const comment = {
+                    id: Date.now().toString(),
+                    author: author,
+                    text: text,
+                    date: new Date().toISOString(),
+                    lessonKey: this.current.lesson
+                };
+                
+                if (!this.state.comments[this.current.lesson]) {
+                    this.state.comments[this.current.lesson] = [];
+                }
+                
+                this.state.comments[this.current.lesson].unshift(comment);
+                
+                await this.saveData();
+                e.target.reset();
+                await this.loadComments(this.current.lesson);
+                this.updateStatistics();
+                this.showToast('تم إضافة التعليق بنجاح', 'success');
+            }
+            
+            // دالة جديدة: استخدام transaction للتعامل مع الإعجابات
+            async handleLikeDislikeTransaction(type) {
+                if (!this.current.lesson) return;
+                
+                try {
+                    const likeRef = this.database.ref(`sites/${this.siteId}/likes/${this.current.lesson}`);
+                    
+                    // استخدام transaction لضمان التحديث الآمن
+                    likeRef.transaction((currentLikes) => {
+                        if (currentLikes === null) {
+                            currentLikes = { likes: 0, dislikes: 0 };
+                        }
+                        
+                        if (type === 'like') {
+                            currentLikes.likes = (currentLikes.likes || 0) + 1;
+                        } else {
+                            currentLikes.dislikes = (currentLikes.dislikes || 0) + 1;
+                        }
+                        
+                        return currentLikes;
+                    }, (error, committed, snapshot) => {
+                        if (error) {
+                            console.error('Transaction failed:', error);
+                            this.showToast('فشل في تسجيل الإعجاب', 'error');
+                        } else if (committed) {
+                            console.log('Transaction committed');
+                            this.state.likes[this.current.lesson] = snapshot.val();
+                            this.updateLikesDislikes(this.current.lesson);
+                            this.updateStatistics();
+                            this.showToast(`تم تسجيل ${type === 'like' ? 'الإعجاب' : 'عدم الإعجاب'} بنجاح`, 'success');
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('Error in like/dislike:', error);
+                    
+                    // Fallback إلى الطريقة العادية إذا فشلت transaction
+                    await this.handleLikeDislikeFallback(type);
+                }
+            }
+            
+            // دالة احتياطية للتعامل مع الإعجابات
+            async handleLikeDislikeFallback(type) {
+                const likesData = this.state.likes[this.current.lesson] || { likes: 0, dislikes: 0 };
+                
+                if (type === 'like') {
+                    likesData.likes = (likesData.likes || 0) + 1;
+                } else {
+                    likesData.dislikes = (likesData.dislikes || 0) + 1;
+                }
+                
+                this.state.likes[this.current.lesson] = likesData;
+                
+                await this.saveData();
+                this.updateLikesDislikes(this.current.lesson);
+                this.updateStatistics();
+                this.showToast(`تم تسجيل ${type === 'like' ? 'الإعجاب' : 'عدم الإعجاب'} بنجاح`, 'success');
+            }
+            
+            showLoginModal() {
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            }
+            
+            handleLogin(e) {
+                e.preventDefault();
+                const password = document.getElementById('admin-password').value;
+                
+                if (password === this.state.siteSettings.password) {
+                    this.ui.isAdmin = true;
+                    document.getElementById('loginModal').querySelector('.btn-close').click();
+                    this.showAdminDashboard();
+                } else {
+                    this.showToast('كلمة المرور غير صحيحة', 'error');
+                }
+            }
+            
+            handleLogout() {
+                this.ui.isAdmin = false;
+                this.showMainSite();
+            }
+            
+            showMainSite() {
+                document.getElementById('admin-dashboard').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                this.displayStages();
+                window.scrollTo(0, 0);
+            }
+            
+            showStages() {
+                document.getElementById('stages').style.display = 'block';
+                document.getElementById('lessons').style.display = 'none';
+                document.getElementById('lesson-content').style.display = 'none';
+                document.getElementById('stages').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            showLessons() {
+                if (!this.current.stage) return;
+                this.showUnits(this.current.stage);
+            }
+            
+            showAdminDashboard() {
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                this.updateStatistics();
+                window.scrollTo(0, 0);
+            }
+            
+            populateStageSelects() {
+                const stageSelects = ['admin-stage'];
+                
+                stageSelects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.innerHTML = '';
+                        
+                        this.state.stages.forEach(stage => {
+                            const option = document.createElement('option');
+                            option.value = stage.id;
+                            option.textContent = stage.name;
+                            select.appendChild(option);
+                        });
+                    }
+                });
+            }
+            
+            async saveLesson(e) {
+                e.preventDefault();
+                
+                const stageId = parseInt(document.getElementById('admin-stage').value);
+                const unitId = parseInt(document.getElementById('admin-unit').value);
+                const lessonId = parseInt(document.getElementById('admin-lesson').value);
+                const title = document.getElementById('lesson-title-input').value.trim();
+                const youtubeUrl = document.getElementById('youtube-url').value.trim();
+                const description = document.getElementById('lesson-description-input').value.trim();
+                const externalLink = document.getElementById('external-link').value.trim();
+                
+                if (!title) {
+                    this.showToast('الرجاء إدخال عنوان للدرس', 'warning');
+                    return;
+                }
+                
+                const lessonKey = `${stageId}-${unitId}-${lessonId}`;
+                const lessonData = {
+                    title: title,
+                    description: description,
+                    youtubeUrl: youtubeUrl,
+                    externalLink: externalLink,
+                    date: new Date().toISOString(),
+                    createdBy: 'admin'
+                };
+                
+                // رفع ملف HTML إذا تم اختياره
+                const htmlFileInput = document.getElementById('html-file');
+                if (htmlFileInput.files.length > 0) {
+                    try {
+                        this.showLoading('جاري رفع ملف HTML...');
+                        const htmlFileUrl = await this.uploadHtmlFile(htmlFileInput.files[0], lessonKey);
+                        lessonData.htmlFileUrl = htmlFileUrl;
+                        lessonData.htmlFileName = htmlFileInput.files[0].name;
+                        this.removeHtmlFile();
+                    } catch (error) {
+                        console.error('Error uploading HTML file:', error);
+                        this.showToast('فشل في رفع ملف HTML', 'error');
+                    } finally {
+                        this.hideLoading();
+                    }
+                }
+                
+                // حفظ الدرس مباشرة في Firebase
+                try {
+                    this.showLoading('جاري حفظ الدرس في السحابة...');
+                    
+                    // حفظ الدرس في Firebase
+                    await this.database.ref(`sites/${this.siteId}/lessons/${lessonKey}`).set(lessonData);
+                    
+                    // تحديث state المحلي
+                    this.state.lessons[lessonKey] = lessonData;
+                    
+                    // حفظ نسخة محلية
+                    await this.saveToLocalStorage();
+                    
+                    this.showToast('تم حفظ الدرس بنجاح!', 'success');
+                    e.target.reset();
+                    this.updateStatistics();
+                    
+                    if (this.current.lesson === lessonKey) {
+                        this.showLesson(lessonKey);
+                    }
+                    
+                    this.displayStages();
+                    
+                } catch (error) {
+                    console.error('Error saving lesson:', error);
+                    this.showToast('فشل في حفظ الدرس', 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+            
+            async uploadHtmlFile(file, lessonKey) {
+                if (!this.isConnected) {
+                    throw new Error('لا يوجد اتصال بالسحابة');
+                }
+                
+                const filePath = `html-lessons/${this.siteId}/${lessonKey}/${file.name}`;
+                const storageRef = this.storage.ref(filePath);
+                
+                // رفع الملف
+                await storageRef.put(file);
+                
+                // الحصول على رابط التنزيل
+                const downloadURL = await storageRef.getDownloadURL();
+                
+                return downloadURL;
+            }
+            
+            async uploadLogo() {
+                const fileInput = document.getElementById('logo-upload');
+                if (fileInput.files.length === 0) {
+                    this.showToast('الرجاء اختيار صورة للشعار', 'warning');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                if (!file.type.match('image.*')) {
+                    this.showToast('الرجاء اختيار ملف صورة', 'warning');
+                    return;
+                }
+                
+                try {
+                    this.showLoading('جاري رفع الشعار...');
+                    
+                    // رفع الصورة إلى Firebase Storage
+                    const filePath = `site-images/${this.siteId}/logo`;
+                    const storageRef = this.storage.ref(filePath);
+                    await storageRef.put(file);
+                    
+                    // الحصول على رابط الصورة
+                    const downloadURL = await storageRef.getDownloadURL();
+                    
+                    // حفظ الرابط في البيانات
+                    this.state.siteSettings.logoUrl = downloadURL;
+                    this.state.siteSettings.logo = file.name;
+                    
+                    await this.saveData();
+                    
+                    // تحديث المعاينة
+                    this.updateLogoPreview();
+                    
+                    this.showToast('تم رفع الشعار بنجاح!', 'success');
+                    fileInput.value = '';
+                    
+                } catch (error) {
+                    console.error('Error uploading logo:', error);
+                    this.showToast('فشل في رفع الشعار', 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+            
+            async uploadTeacherImage() {
+                const fileInput = document.getElementById('teacher-image-upload');
+                if (fileInput.files.length === 0) {
+                    this.showToast('الرجاء اختيار صورة للمدرس', 'warning');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                if (!file.type.match('image.*')) {
+                    this.showToast('الرجاء اختيار ملف صورة', 'warning');
+                    return;
+                }
+                
+                try {
+                    this.showLoading('جاري رفع صورة المدرس...');
+                    
+                    // رفع الصورة إلى Firebase Storage
+                    const filePath = `site-images/${this.siteId}/teacher`;
+                    const storageRef = this.storage.ref(filePath);
+                    await storageRef.put(file);
+                    
+                    // الحصول على رابط الصورة
+                    const downloadURL = await storageRef.getDownloadURL();
+                    
+                    // حفظ الرابط في البيانات
+                    this.state.teacherInfo.imageUrl = downloadURL;
+                    this.state.teacherInfo.image = file.name;
+                    
+                    await this.saveData();
+                    
+                    // تحديث المعاينة
+                    this.updateTeacherImagePreview();
+                    
+                    this.showToast('تم رفع صورة المدرس بنجاح!', 'success');
+                    fileInput.value = '';
+                    
+                } catch (error) {
+                    console.error('Error uploading teacher image:', error);
+                    this.showToast('فشل في رفع صورة المدرس', 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+            
+            updateLogoPreview() {
+                const logoPreviewPlaceholder = document.getElementById('logo-preview-placeholder');
+                const logoPreviewImg = document.getElementById('logo-preview-img');
+                const siteLogo = document.getElementById('site-logo');
+                
+                if (this.state.siteSettings.logoUrl) {
+                    logoPreviewPlaceholder.style.display = 'none';
+                    logoPreviewImg.src = this.state.siteSettings.logoUrl;
+                    logoPreviewImg.style.display = 'block';
+                    siteLogo.src = this.state.siteSettings.logoUrl;
+                } else {
+                    logoPreviewPlaceholder.style.display = 'flex';
+                    logoPreviewImg.style.display = 'none';
+                }
+            }
+            
+            updateTeacherImagePreview() {
+                const teacherImagePreviewPlaceholder = document.getElementById('teacher-image-preview-placeholder');
+                const teacherImagePreviewImg = document.getElementById('teacher-image-preview-img');
+                const teacherImage = document.getElementById('teacher-image');
+                const teacherImagePlaceholder = document.getElementById('teacher-image-placeholder');
+                
+                if (this.state.teacherInfo.imageUrl) {
+                    teacherImagePreviewPlaceholder.style.display = 'none';
+                    teacherImagePreviewImg.src = this.state.teacherInfo.imageUrl;
+                    teacherImagePreviewImg.style.display = 'block';
+                    teacherImage.src = this.state.teacherInfo.imageUrl;
+                    teacherImage.style.display = 'block';
+                    teacherImagePlaceholder.style.display = 'none';
+                } else {
+                    teacherImagePreviewPlaceholder.style.display = 'flex';
+                    teacherImagePreviewImg.style.display = 'none';
+                    teacherImage.style.display = 'none';
+                    teacherImagePlaceholder.style.display = 'flex';
+                }
+            }
+            
+            updateStatistics() {
+                const totalLessons = Object.keys(this.state.lessons).length;
+                if (document.getElementById('total-lessons')) {
+                    document.getElementById('total-lessons').textContent = totalLessons;
+                }
+                document.getElementById('total-lessons-display').textContent = totalLessons;
+                
+                let totalComments = 0;
+                for (const lessonKey in this.state.comments) {
+                    totalComments += this.state.comments[lessonKey].length;
+                }
+                if (document.getElementById('total-comments')) {
+                    document.getElementById('total-comments').textContent = totalComments;
+                }
+                
+                let totalLikes = 0;
+                for (const lessonKey in this.state.likes) {
+                    totalLikes += (this.state.likes[lessonKey].likes || 0);
+                }
+                if (document.getElementById('total-likes')) {
+                    document.getElementById('total-likes').textContent = totalLikes;
+                }
+            }
+            
+            updateTotalLessonsDisplay() {
+                const totalLessons = Object.keys(this.state.lessons).length;
+                document.getElementById('total-lessons-display').textContent = totalLessons;
+            }
+            
+            async saveSiteSettings(e) {
+                e.preventDefault();
+                
+                const siteTitle = document.getElementById('site-title-input').value.trim();
+                const newPassword = document.getElementById('admin-password-input').value.trim();
+                
+                if (siteTitle) {
+                    this.state.siteSettings.title = siteTitle;
+                    this.updateSiteTitle();
+                }
+                
+                if (newPassword) {
+                    this.state.siteSettings.password = newPassword;
+                    document.getElementById('admin-password-input').value = '';
+                }
+                
+                await this.saveData();
+                this.showToast('تم حفظ إعدادات الموقع بنجاح!', 'success');
+            }
+            
+            async saveTeacherInfo(e) {
+                e.preventDefault();
+                
+                const teacherName = document.getElementById('teacher-name-input').value.trim();
+                const qualifications = document.getElementById('teacher-qualifications-input').value.trim();
+                const bio = document.getElementById('teacher-bio-input').value.trim();
+                const goal = document.getElementById('teacher-goal-input').value.trim();
+                
+                this.state.teacherInfo.name = teacherName;
+                this.state.teacherInfo.qualifications = qualifications;
+                this.state.teacherInfo.bio = bio;
+                this.state.teacherInfo.goal = goal;
+                
+                await this.saveData();
+                this.updateTeacherInfo();
+                this.showToast('تم حفظ معلومات المدرس بنجاح!', 'success');
+            }
+            
+            updateTeacherInfo() {
+                const teacherInfo = this.state.teacherInfo;
+                
+                document.getElementById('teacher-name').textContent = teacherInfo.name;
+                document.getElementById('teacher-qualifications').textContent = teacherInfo.qualifications;
+                document.getElementById('teacher-bio').textContent = teacherInfo.bio;
+                document.getElementById('teacher-goal').textContent = teacherInfo.goal;
+                
+                // تحديث الحقول في لوحة التحكم
+                if (document.getElementById('teacher-name-input')) {
+                    document.getElementById('teacher-name-input').value = teacherInfo.name;
+                }
+                if (document.getElementById('teacher-qualifications-input')) {
+                    document.getElementById('teacher-qualifications-input').value = teacherInfo.qualifications;
+                }
+                if (document.getElementById('teacher-bio-input')) {
+                    document.getElementById('teacher-bio-input').value = teacherInfo.bio;
+                }
+                if (document.getElementById('teacher-goal-input')) {
+                    document.getElementById('teacher-goal-input').value = teacherInfo.goal;
+                }
+            }
+            
+            updateSiteTitle() {
+                const siteTitle = this.state.siteSettings.title;
+                document.getElementById('site-title').textContent = siteTitle;
+                document.getElementById('footer-site-title').textContent = siteTitle;
+                if (document.getElementById('site-title-input')) {
+                    document.getElementById('site-title-input').value = siteTitle;
+                }
+            }
+            
+            updateSiteStatus() {
+                const statusElement = document.getElementById('footer-site-status');
+                if (statusElement) {
+                    if (this.state.siteSettings.isAvailable) {
+                        statusElement.innerHTML = '<span class="badge bg-success">متاح</span>';
+                    } else {
+                        statusElement.innerHTML = '<span class="badge bg-warning">غير متاح مؤقتاً</span>';
+                    }
+                }
+            }
+            
+            async toggleSiteAvailability(e) {
+                const isAvailable = e.target.checked;
+                this.state.siteSettings.isAvailable = isAvailable;
+                await this.saveData();
+                this.updateSiteStatus();
+            }
+            
+            handleHtmlFileSelect() {
+                const fileInput = document.getElementById('html-file');
+                const fileInfo = document.getElementById('html-file-info');
+                const fileName = document.getElementById('html-file-name');
+                
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    fileName.textContent = file.name;
+                    fileInfo.style.display = 'block';
+                }
+            }
+            
+            removeHtmlFile() {
+                const fileInput = document.getElementById('html-file');
+                const fileInfo = document.getElementById('html-file-info');
+                
+                fileInput.value = '';
+                fileInfo.style.display = 'none';
+            }
+            
+            exportData() {
+                const exportData = {
+                    ...this.state,
+                    metadata: {
+                        exportedAt: new Date().toISOString(),
+                        version: '1.0.0',
+                        siteId: this.siteId
+                    }
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `english_teacher_export_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                document.body.appendChild(linkElement);
+                linkElement.click();
+                document.body.removeChild(linkElement);
+                
+                this.showToast('تم تصدير البيانات بنجاح', 'success');
+            }
+            
+            async importData(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (!importedData.stages || !importedData.lessons) {
+                            throw new Error('Invalid data format');
+                        }
+                        
+                        if (confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟')) {
+                            this.state = importedData;
+                            await this.saveData();
+                            this.updateUI();
+                            this.showToast('تم استيراد البيانات بنجاح', 'success');
+                        }
+                    } catch (error) {
+                        this.showToast('خطأ في قراءة الملف. يرجى التأكد من صحة تنسيق JSON.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            }
+            
+            showCloudStatus(text, isConnected) {
+                const cloudStatus = document.getElementById('cloudStatus');
+                const statusText = document.getElementById('cloudStatusText');
+                
+                if (cloudStatus && statusText) {
+                    cloudStatus.style.display = 'flex';
+                    if (isConnected) {
+                        cloudStatus.className = 'cloud-status';
+                        statusText.textContent = text;
+                    } else {
+                        cloudStatus.className = 'cloud-status disconnected';
+                        statusText.textContent = text;
+                    }
+                }
+            }
+            
+            showLoading(message) {
+                const overlay = document.getElementById('loadingOverlay');
+                const text = document.getElementById('loadingText');
+                
+                if (overlay && text) {
+                    text.textContent = message;
+                    overlay.style.display = 'flex';
+                }
+            }
+            
+            hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            }
+            
+            showToast(message, type = 'info') {
+                const toastContainer = document.getElementById('toastContainer');
+                if (!toastContainer) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi ${this.getToastIcon(type)} me-2"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+            
+            getToastIcon(type) {
+                const icons = {
+                    success: 'bi-check-circle-fill text-success',
+                    error: 'bi-x-circle-fill text-danger',
+                    warning: 'bi-exclamation-circle-fill text-warning',
+                    info: 'bi-info-circle-fill text-primary'
+                };
+                return icons[type] || 'bi-info-circle-fill';
+            }
+        }
+
+        // تشغيل التطبيق
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.app = new EnglishTeacherSystem();
+            await window.app.initialize();
+        });
+
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            if (window.app) {
+                window.app.showToast('حدث خطأ غير متوقع', 'error');
+            }
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (window.app) {
+                window.app.showToast('حدث خطأ في النظام', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
