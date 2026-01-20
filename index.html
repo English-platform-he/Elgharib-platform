@@ -365,6 +365,46 @@
             border-color: var(--primary-blue);
             background-color: #e7f1ff;
         }
+        
+        /* Progress bar */
+        .progress-container {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        
+        /* File size info */
+        .file-size-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .file-size-warning {
+            color: var(--warning);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -654,6 +694,14 @@
             </div>
         </div>
         
+        <!-- Progress Container -->
+        <div class="progress-container" id="upload-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="upload-progress-fill"></div>
+            </div>
+            <div class="progress-text" id="upload-progress-text">0%</div>
+        </div>
+        
         <div class="row">
             <div class="col-lg-8">
                 <div class="admin-card card mb-4">
@@ -712,11 +760,16 @@
                                     <i class="bi bi-file-earmark-code display-4 text-muted mb-3"></i>
                                     <p>اسحب وأفلت ملف HTML هنا<br>أو انقر للاختيار</p>
                                     <small class="text-muted">يدعم ملفات HTML مع CSS و JS</small>
+                                    <small class="text-muted d-block file-size-info">الحد الأقصى: 20MB</small>
                                     <input type="file" class="d-none" id="html-file" accept=".html,.zip">
                                 </div>
                                 <div id="html-file-info" class="mt-2" style="display: none;">
                                     <div class="alert alert-success d-flex align-items-center justify-content-between">
-                                        <span><i class="bi bi-file-earmark-check me-2"></i> <span id="html-file-name">file.html</span></span>
+                                        <div>
+                                            <i class="bi bi-file-earmark-check me-2"></i> 
+                                            <span id="html-file-name">file.html</span>
+                                            <div class="file-size-info" id="html-file-size"></div>
+                                        </div>
                                         <button type="button" class="btn-close" id="remove-html-file"></button>
                                     </div>
                                 </div>
@@ -746,6 +799,7 @@
                                         <button class="btn btn-outline-primary" type="button" id="upload-logo-btn">رفع</button>
                                     </div>
                                     <small class="form-text text-muted">الحجم الموصى به: 200x200 بكسل</small>
+                                    <small class="form-text text-muted file-size-info">الحد الأقصى: 5MB</small>
                                 </div>
                             </div>
                             
@@ -765,6 +819,7 @@
                                         <button class="btn btn-outline-primary" type="button" id="upload-teacher-image-btn">رفع</button>
                                     </div>
                                     <small class="form-text text-muted">الحجم الموصى به: 400x400 بكسل</small>
+                                    <small class="form-text text-muted file-size-info">الحد الأقصى: 5MB</small>
                                 </div>
                             </div>
                         </div>
@@ -876,7 +931,7 @@
         // ============================================
         class EnglishTeacherSystem {
             constructor() {
-                this.siteId = 'main_site'; // استخدام معرف واحد لجميع المستخدمين
+                this.siteId = 'main_site';
                 this.state = {
                     stages: [],
                     lessons: {},
@@ -921,16 +976,10 @@
                 try {
                     this.showLoading('جاري تحميل النظام...');
                     
-                    // Initialize Firebase
                     await this.initializeFirebase();
-                    
-                    // Setup event listeners
                     this.setupEventListeners();
-                    
-                    // Initialize UI
                     await this.initializeUI();
                     
-                    // Hide loading
                     setTimeout(() => {
                         this.hideLoading();
                         this.showToast('مرحباً بك في نظام مدرس اللغة الإنجليزية!', 'success');
@@ -945,27 +994,18 @@
             
             async initializeFirebase() {
                 try {
-                    // Initialize Firebase
                     const app = firebase.initializeApp(firebaseConfig);
                     this.database = firebase.database(app);
                     this.storage = firebase.storage(app);
                     
-                    // Setup connection listener
                     this.setupConnectionListener();
-                    
-                    // Load data from Firebase
                     await this.loadFromFirebase();
-                    
-                    // Setup real-time listener
                     this.setupRealtimeListener();
                     
                 } catch (error) {
                     console.error('Firebase initialization error:', error);
                     this.showCloudStatus('غير متصل', false);
                     this.showToast('فشل الاتصال بالسحابة. التطبيق يعمل محلياً.', 'warning');
-                    
-                    // Fallback to localStorage
-                    await this.loadFromLocalStorage();
                 }
             }
             
@@ -994,7 +1034,6 @@
                     
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        // Ensure all properties exist
                         data.lessons = data.lessons || {};
                         data.comments = data.comments || {};
                         data.likes = data.likes || {};
@@ -1003,7 +1042,6 @@
                         console.log('تم تحميل البيانات من Firebase:', this.state);
                         this.showToast('تم تحميل البيانات من السحابة', 'success');
                     } else {
-                        // Create initial data in Firebase
                         await this.createInitialData();
                     }
                     
@@ -1016,7 +1054,6 @@
             async createInitialData() {
                 await this.initializeStages();
                 
-                // Ensure all properties exist
                 this.state.lessons = this.state.lessons || {};
                 this.state.comments = this.state.comments || {};
                 this.state.likes = this.state.likes || {};
@@ -1026,14 +1063,11 @@
             }
             
             setupRealtimeListener() {
-                // الاستماع للتغييرات في الوقت الحقيقي
                 this.database.ref(`sites/${this.siteId}`).on('value', (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         console.log('Firebase update received:', data);
                         
-                        // تحديث state مع البيانات الجديدة
-                        // Ensure all properties exist
                         data.lessons = data.lessons || {};
                         data.comments = data.comments || {};
                         data.likes = data.likes || {};
@@ -1143,7 +1177,7 @@
                     this.addComment(e);
                 });
                 
-                // Likes - تعديل: حفظ مباشر في Firebase
+                // Likes
                 document.getElementById('like-btn').addEventListener('click', () => {
                     this.handleLike('like');
                 });
@@ -1233,29 +1267,15 @@
             }
             
             async initializeUI() {
-                // Set current year
                 document.getElementById('current-year').textContent = new Date().getFullYear();
                 
-                // Update site title
                 this.updateSiteTitle();
-                
-                // Update teacher info
                 this.updateTeacherInfo();
-                
-                // Update logo and teacher image previews
                 this.updateLogoPreview();
                 this.updateTeacherImagePreview();
-                
-                // Populate stage selects
                 this.populateStageSelects();
-                
-                // Display stages
                 await this.displayStages();
-                
-                // Update statistics
                 this.updateStatistics();
-                
-                // Update site status
                 this.updateSiteStatus();
             }
             
@@ -1414,7 +1434,6 @@
                 const lessons = this.state.lessons || {};
                 const lessonData = lessons[lessonKey];
                 
-                // إخفاء جميع الحاويات أولاً
                 document.getElementById('html-lesson-container').style.display = 'none';
                 document.getElementById('video-container').style.display = 'none';
                 document.getElementById('text-content-container').style.display = 'none';
@@ -1424,20 +1443,16 @@
                     document.getElementById('lesson-title').textContent = lessonData.title;
                     document.getElementById('lesson-date').textContent = new Date(lessonData.date).toLocaleDateString('ar-EG');
                     
-                    // التحقق من نوع المحتوى وعرضه
                     if (lessonData.htmlFileUrl) {
-                        // عرض ملف HTML
                         const htmlFrame = document.getElementById('html-lesson-frame');
                         htmlFrame.src = lessonData.htmlFileUrl;
                         document.getElementById('html-lesson-container').style.display = 'block';
                         this.showToast('جاري تحميل الدرس التفاعلي...', 'info');
                     } else if (lessonData.externalLink) {
-                        // عرض رابط خارجي
                         const externalLinkBtn = document.getElementById('external-link-btn');
                         externalLinkBtn.href = lessonData.externalLink;
                         document.getElementById('external-link-container').style.display = 'block';
                     } else if (lessonData.youtubeUrl) {
-                        // عرض فيديو YouTube
                         const videoId = this.extractYouTubeId(lessonData.youtubeUrl);
                         if (videoId) {
                             const videoContainer = document.getElementById('video-container');
@@ -1452,7 +1467,6 @@
                         }
                         document.getElementById('text-content-container').style.display = 'block';
                     } else {
-                        // عرض النص فقط
                         document.getElementById('text-content-container').style.display = 'block';
                     }
                     
@@ -1543,7 +1557,6 @@
                     lessonKey: this.current.lesson
                 };
                 
-                // تحديث state المحلي أولاً
                 if (!this.state.comments) {
                     this.state.comments = {};
                 }
@@ -1554,7 +1567,6 @@
                 
                 this.state.comments[this.current.lesson].unshift(comment);
                 
-                // حفظ مباشرة في Firebase
                 try {
                     await this.database.ref(`sites/${this.siteId}/comments/${this.current.lesson}`).set(this.state.comments[this.current.lesson]);
                     
@@ -1574,7 +1586,6 @@
                 try {
                     const likeRef = this.database.ref(`sites/${this.siteId}/likes/${this.current.lesson}`);
                     
-                    // استخدام transaction للتأكد من عدم فقدان البيانات
                     likeRef.transaction((currentLikes) => {
                         if (currentLikes === null) {
                             currentLikes = { likes: 0, dislikes: 0 };
@@ -1702,31 +1713,28 @@
                     createdBy: 'admin'
                 };
                 
-                // رفع ملف HTML إذا تم اختياره
                 const htmlFileInput = document.getElementById('html-file');
                 if (htmlFileInput.files.length > 0) {
                     try {
-                        this.showLoading('جاري رفع ملف HTML...');
+                        this.showUploadProgress(0, 'جاري رفع ملف HTML...');
                         const htmlFileUrl = await this.uploadHtmlFile(htmlFileInput.files[0], lessonKey);
                         lessonData.htmlFileUrl = htmlFileUrl;
                         lessonData.htmlFileName = htmlFileInput.files[0].name;
                         this.removeHtmlFile();
+                        this.hideUploadProgress();
                     } catch (error) {
                         console.error('Error uploading HTML file:', error);
-                        this.showToast('فشل في رفع ملف HTML', 'error');
-                    } finally {
-                        this.hideLoading();
+                        this.hideUploadProgress();
+                        this.showToast(`فشل في رفع ملف HTML: ${error.message}`, 'error');
+                        return;
                     }
                 }
                 
-                // حفظ الدرس مباشرة في Firebase
                 try {
                     this.showLoading('جاري حفظ الدرس في السحابة...');
                     
-                    // حفظ الدرس في Firebase
                     await this.database.ref(`sites/${this.siteId}/lessons/${lessonKey}`).set(lessonData);
                     
-                    // تحديث state المحلي
                     if (!this.state.lessons) {
                         this.state.lessons = {};
                     }
@@ -1750,23 +1758,61 @@
                 }
             }
             
-            async uploadHtmlFile(file, lessonKey) {
-                if (!this.isConnected) {
-                    throw new Error('لا يوجد اتصال بالسحابة');
-                }
-                
-                const filePath = `html-lessons/${this.siteId}/${lessonKey}/${file.name}`;
-                const storageRef = this.storage.ref(filePath);
-                
-                // رفع الملف
-                await storageRef.put(file);
-                
-                // الحصول على رابط التنزيل
-                const downloadURL = await storageRef.getDownloadURL();
-                
-                return downloadURL;
+            // دالة ضغط الصورة
+            async compressImage(file, maxWidth, maxHeight) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.src = e.target.result;
+                        
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height = Math.round((height * maxWidth) / width);
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width = Math.round((width * maxHeight) / height);
+                                    height = maxHeight;
+                                }
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            canvas.toBlob((blob) => {
+                                const compressedFile = new File([blob], `image_${Date.now()}.jpg`, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(compressedFile);
+                            }, 'image/jpeg', 0.8);
+                        };
+                        
+                        img.onerror = (error) => {
+                            reject(new Error('فشل في تحميل الصورة'));
+                        };
+                    };
+                    
+                    reader.onerror = (error) => {
+                        reject(new Error('فشل في قراءة الملف'));
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
             }
             
+            // رفع الشعار مع ضغط
             async uploadLogo() {
                 const fileInput = document.getElementById('logo-upload');
                 if (fileInput.files.length === 0) {
@@ -1775,44 +1821,73 @@
                 }
                 
                 const file = fileInput.files[0];
+                
                 if (!file.type.match('image.*')) {
-                    this.showToast('الرجاء اختيار ملف صورة', 'warning');
+                    this.showToast('الرجاء اختيار ملف صورة (JPEG, PNG, GIF)', 'warning');
+                    return;
+                }
+                
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    this.showToast('حجم الصورة كبير جداً. الحد الأقصى 5MB', 'warning');
                     return;
                 }
                 
                 try {
-                    this.showLoading('جاري رفع الشعار...');
+                    this.showUploadProgress(0, 'جاري ضغط الصورة...');
                     
-                    // رفع الصورة إلى Firebase Storage
+                    const compressedFile = await this.compressImage(file, 200, 200);
+                    
+                    this.showUploadProgress(10, 'جاري رفع الشعار...');
+                    
                     const filePath = `site-images/${this.siteId}/logo`;
                     const storageRef = this.storage.ref(filePath);
-                    await storageRef.put(file);
                     
-                    // الحصول على رابط الصورة
-                    const downloadURL = await storageRef.getDownloadURL();
+                    const metadata = {
+                        contentType: 'image/jpeg',
+                        customMetadata: {
+                            'uploadedBy': 'admin',
+                            'uploadedAt': new Date().toISOString()
+                        }
+                    };
                     
-                    // حفظ الرابط في Firebase
-                    await this.database.ref(`sites/${this.siteId}/siteSettings/logoUrl`).set(downloadURL);
-                    await this.database.ref(`sites/${this.siteId}/siteSettings/logo`).set(file.name);
+                    const uploadTask = storageRef.put(compressedFile, metadata);
                     
-                    // تحديث state المحلي
-                    this.state.siteSettings.logoUrl = downloadURL;
-                    this.state.siteSettings.logo = file.name;
-                    
-                    // تحديث المعاينة
-                    this.updateLogoPreview();
-                    
-                    this.showToast('تم رفع الشعار بنجاح!', 'success');
-                    fileInput.value = '';
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            this.showUploadProgress(progress, `جاري رفع الشعار: ${Math.round(progress)}%`);
+                        },
+                        (error) => {
+                            console.error('Upload error:', error);
+                            this.hideUploadProgress();
+                            this.showToast(`فشل في رفع الشعار: ${error.message}`, 'error');
+                        },
+                        async () => {
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            
+                            await this.database.ref(`sites/${this.siteId}/siteSettings/logoUrl`).set(downloadURL);
+                            await this.database.ref(`sites/${this.siteId}/siteSettings/logo`).set(compressedFile.name);
+                            
+                            this.state.siteSettings.logoUrl = downloadURL;
+                            this.state.siteSettings.logo = compressedFile.name;
+                            
+                            this.updateLogoPreview();
+                            
+                            this.hideUploadProgress();
+                            this.showToast('تم رفع الشعار بنجاح!', 'success');
+                            fileInput.value = '';
+                        }
+                    );
                     
                 } catch (error) {
                     console.error('Error uploading logo:', error);
-                    this.showToast('فشل في رفع الشعار', 'error');
-                } finally {
-                    this.hideLoading();
+                    this.hideUploadProgress();
+                    this.showToast(`فشل في رفع الشعار: ${error.message}`, 'error');
                 }
             }
             
+            // رفع صورة المدرس مع ضغط
             async uploadTeacherImage() {
                 const fileInput = document.getElementById('teacher-image-upload');
                 if (fileInput.files.length === 0) {
@@ -1821,42 +1896,127 @@
                 }
                 
                 const file = fileInput.files[0];
+                
                 if (!file.type.match('image.*')) {
-                    this.showToast('الرجاء اختيار ملف صورة', 'warning');
+                    this.showToast('الرجاء اختيار ملف صورة (JPEG, PNG, GIF)', 'warning');
+                    return;
+                }
+                
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    this.showToast('حجم الصورة كبير جداً. الحد الأقصى 5MB', 'warning');
                     return;
                 }
                 
                 try {
-                    this.showLoading('جاري رفع صورة المدرس...');
+                    this.showUploadProgress(0, 'جاري ضغط الصورة...');
                     
-                    // رفع الصورة إلى Firebase Storage
+                    const compressedFile = await this.compressImage(file, 400, 400);
+                    
+                    this.showUploadProgress(10, 'جاري رفع صورة المدرس...');
+                    
                     const filePath = `site-images/${this.siteId}/teacher`;
                     const storageRef = this.storage.ref(filePath);
-                    await storageRef.put(file);
                     
-                    // الحصول على رابط الصورة
-                    const downloadURL = await storageRef.getDownloadURL();
+                    const metadata = {
+                        contentType: 'image/jpeg',
+                        customMetadata: {
+                            'uploadedBy': 'admin',
+                            'uploadedAt': new Date().toISOString()
+                        }
+                    };
                     
-                    // حفظ الرابط في Firebase
-                    await this.database.ref(`sites/${this.siteId}/teacherInfo/imageUrl`).set(downloadURL);
-                    await this.database.ref(`sites/${this.siteId}/teacherInfo/image`).set(file.name);
+                    const uploadTask = storageRef.put(compressedFile, metadata);
                     
-                    // تحديث state المحلي
-                    this.state.teacherInfo.imageUrl = downloadURL;
-                    this.state.teacherInfo.image = file.name;
-                    
-                    // تحديث المعاينة
-                    this.updateTeacherImagePreview();
-                    
-                    this.showToast('تم رفع صورة المدرس بنجاح!', 'success');
-                    fileInput.value = '';
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            this.showUploadProgress(progress, `جاري رفع صورة المدرس: ${Math.round(progress)}%`);
+                        },
+                        (error) => {
+                            console.error('Upload error:', error);
+                            this.hideUploadProgress();
+                            this.showToast(`فشل في رفع صورة المدرس: ${error.message}`, 'error');
+                        },
+                        async () => {
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            
+                            await this.database.ref(`sites/${this.siteId}/teacherInfo/imageUrl`).set(downloadURL);
+                            await this.database.ref(`sites/${this.siteId}/teacherInfo/image`).set(compressedFile.name);
+                            
+                            this.state.teacherInfo.imageUrl = downloadURL;
+                            this.state.teacherInfo.image = compressedFile.name;
+                            
+                            this.updateTeacherImagePreview();
+                            
+                            this.hideUploadProgress();
+                            this.showToast('تم رفع صورة المدرس بنجاح!', 'success');
+                            fileInput.value = '';
+                        }
+                    );
                     
                 } catch (error) {
                     console.error('Error uploading teacher image:', error);
-                    this.showToast('فشل في رفع صورة المدرس', 'error');
-                } finally {
-                    this.hideLoading();
+                    this.hideUploadProgress();
+                    this.showToast(`فشل في رفع صورة المدرس: ${error.message}`, 'error');
                 }
+            }
+            
+            // رفع ملف HTML مع متابعة التقدم
+            async uploadHtmlFile(file, lessonKey) {
+                if (!this.isConnected) {
+                    throw new Error('لا يوجد اتصال بالسحابة');
+                }
+                
+                const maxSize = 20 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    throw new Error('حجم الملف كبير جداً. الحد الأقصى 20MB');
+                }
+                
+                const timestamp = Date.now();
+                const fileName = this.sanitizeFileName(`${timestamp}_${file.name}`);
+                const filePath = `html-lessons/${this.siteId}/${lessonKey}/${fileName}`;
+                const storageRef = this.storage.ref(filePath);
+                
+                const metadata = {
+                    contentType: file.type,
+                    customMetadata: {
+                        'originalName': file.name,
+                        'lessonKey': lessonKey,
+                        'uploadedAt': new Date().toISOString()
+                    }
+                };
+                
+                return new Promise((resolve, reject) => {
+                    const uploadTask = storageRef.put(file, metadata);
+                    
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            this.showUploadProgress(progress, `جاري رفع الملف: ${Math.round(progress)}%`);
+                        },
+                        (error) => {
+                            reject(error);
+                        },
+                        async () => {
+                            try {
+                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                resolve(downloadURL);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        }
+                    );
+                });
+            }
+            
+            // تحسين اسم الملف
+            sanitizeFileName(name) {
+                return name
+                    .replace(/[^a-zA-Z0-9\-\.]/g, '_')
+                    .replace(/\s+/g, '_')
+                    .toLowerCase()
+                    .substring(0, 50);
             }
             
             updateLogoPreview() {
@@ -1956,13 +2116,11 @@
                 const bio = document.getElementById('teacher-bio-input').value.trim();
                 const goal = document.getElementById('teacher-goal-input').value.trim();
                 
-                // حفظ مباشرة في Firebase
                 await this.database.ref(`sites/${this.siteId}/teacherInfo/name`).set(teacherName);
                 await this.database.ref(`sites/${this.siteId}/teacherInfo/qualifications`).set(qualifications);
                 await this.database.ref(`sites/${this.siteId}/teacherInfo/bio`).set(bio);
                 await this.database.ref(`sites/${this.siteId}/teacherInfo/goal`).set(goal);
                 
-                // تحديث state المحلي
                 this.state.teacherInfo.name = teacherName;
                 this.state.teacherInfo.qualifications = qualifications;
                 this.state.teacherInfo.bio = bio;
@@ -1980,7 +2138,6 @@
                 document.getElementById('teacher-bio').textContent = teacherInfo.bio;
                 document.getElementById('teacher-goal').textContent = teacherInfo.goal;
                 
-                // تحديث الحقول في لوحة التحكم
                 if (document.getElementById('teacher-name-input')) {
                     document.getElementById('teacher-name-input').value = teacherInfo.name;
                 }
@@ -2018,7 +2175,6 @@
             async toggleSiteAvailability(e) {
                 const isAvailable = e.target.checked;
                 
-                // حفظ مباشرة في Firebase
                 await this.database.ref(`sites/${this.siteId}/siteSettings/isAvailable`).set(isAvailable);
                 
                 this.state.siteSettings.isAvailable = isAvailable;
@@ -2029,10 +2185,22 @@
                 const fileInput = document.getElementById('html-file');
                 const fileInfo = document.getElementById('html-file-info');
                 const fileName = document.getElementById('html-file-name');
+                const fileSize = document.getElementById('html-file-size');
                 
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     fileName.textContent = file.name;
+                    
+                    // عرض حجم الملف
+                    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                    fileSize.textContent = `حجم الملف: ${sizeInMB} MB`;
+                    
+                    if (file.size > 20 * 1024 * 1024) {
+                        fileSize.className = 'file-size-info file-size-warning';
+                    } else {
+                        fileSize.className = 'file-size-info';
+                    }
+                    
                     fileInfo.style.display = 'block';
                 }
             }
@@ -2043,6 +2211,25 @@
                 
                 fileInput.value = '';
                 fileInfo.style.display = 'none';
+            }
+            
+            showUploadProgress(percent, message) {
+                const progressContainer = document.getElementById('upload-progress');
+                const progressFill = document.getElementById('upload-progress-fill');
+                const progressText = document.getElementById('upload-progress-text');
+                
+                if (progressContainer && progressFill && progressText) {
+                    progressContainer.style.display = 'block';
+                    progressFill.style.width = percent + '%';
+                    progressText.textContent = message || `${Math.round(percent)}%`;
+                }
+            }
+            
+            hideUploadProgress() {
+                const progressContainer = document.getElementById('upload-progress');
+                if (progressContainer) {
+                    progressContainer.style.display = 'none';
+                }
             }
             
             exportData() {
@@ -2086,16 +2273,13 @@
                         if (confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟')) {
                             this.showLoading('جاري استيراد البيانات...');
                             
-                            // Ensure all properties exist
                             importedData.lessons = importedData.lessons || {};
                             importedData.comments = importedData.comments || {};
                             importedData.likes = importedData.likes || {};
                             importedData.stages = importedData.stages || [];
                             
-                            // حفظ البيانات المستوردة في Firebase
                             await this.database.ref(`sites/${this.siteId}`).set(importedData);
                             
-                            // تحديث state المحلي
                             this.state = importedData;
                             
                             this.updateUI();
@@ -2109,11 +2293,6 @@
                 };
                 reader.readAsText(file);
                 e.target.value = '';
-            }
-            
-            async loadFromLocalStorage() {
-                // لن نستخدم localStorage في هذا الإصدار، سنعتمد كلياً على Firebase
-                console.log('Working with Firebase only');
             }
             
             showCloudStatus(text, isConnected) {
