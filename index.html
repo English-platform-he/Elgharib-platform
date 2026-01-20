@@ -876,6 +876,7 @@
         // ============================================
         class EnglishTeacherSystem {
             constructor() {
+                this.siteId = 'main_site'; // استخدام معرف واحد لجميع المستخدمين
                 this.state = {
                     stages: [],
                     lessons: {},
@@ -913,9 +914,7 @@
                 this.firebase = null;
                 this.database = null;
                 this.storage = null;
-                this.siteId = null;
                 this.isConnected = false;
-                this.uploadingFile = null;
             }
             
             async initialize() {
@@ -951,9 +950,6 @@
                     this.database = firebase.database(app);
                     this.storage = firebase.storage(app);
                     
-                    // Get or create site ID
-                    this.siteId = await this.getSiteId();
-                    
                     // Setup connection listener
                     this.setupConnectionListener();
                     
@@ -966,22 +962,11 @@
                 } catch (error) {
                     console.error('Firebase initialization error:', error);
                     this.showCloudStatus('غير متصل', false);
+                    this.showToast('فشل الاتصال بالسحابة. التطبيق يعمل محلياً.', 'warning');
                     
                     // Fallback to localStorage
                     await this.loadFromLocalStorage();
-                    this.showToast('يتم العمل محلياً، يمكنك رفع البيانات لاحقاً', 'warning');
                 }
-            }
-            
-            async getSiteId() {
-                let siteId = localStorage.getItem('english_teacher_site_id');
-                
-                if (!siteId) {
-                    siteId = 'site_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('english_teacher_site_id', siteId);
-                }
-                
-                return siteId;
             }
             
             setupConnectionListener() {
@@ -993,9 +978,6 @@
                         if (document.getElementById('connection-status')) {
                             document.getElementById('connection-status').textContent = 'متصل';
                         }
-                        
-                        // محاولة مزامنة البيانات المحلية مع السحابة عند الاتصال
-                        this.syncLocalData();
                     } else {
                         this.isConnected = false;
                         this.showCloudStatus('غير متصل', false);
@@ -1012,17 +994,17 @@
                     
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        this.state = { ...this.state, ...data };
+                        // Ensure all properties exist
+                        data.lessons = data.lessons || {};
+                        data.comments = data.comments || {};
+                        data.likes = data.likes || {};
+                        data.stages = data.stages || [];
+                        this.state = data;
+                        console.log('تم تحميل البيانات من Firebase:', this.state);
                         this.showToast('تم تحميل البيانات من السحابة', 'success');
                     } else {
                         // Create initial data in Firebase
                         await this.createInitialData();
-                    }
-                    
-                    // Initialize stages if empty
-                    if (this.state.stages.length === 0) {
-                        await this.initializeStages();
-                        await this.saveToFirebase();
                     }
                     
                 } catch (error) {
@@ -1032,79 +1014,37 @@
             }
             
             async createInitialData() {
-                const initialData = {
-                    stages: [],
-                    lessons: {},
-                    comments: {},
-                    likes: {},
-                    siteSettings: {
-                        title: "مدرس اللغة الإنجليزية",
-                        password: "admin123",
-                        logo: "",
-                        logoUrl: "",
-                        isAvailable: true,
-                        createdAt: new Date().toISOString()
-                    },
-                    teacherInfo: {
-                        name: "محمد أحمد",
-                        image: "",
-                        imageUrl: "",
-                        qualifications: "حاصل على شهادة الماجستير في اللغويات التطبيقية وشهادات تدريس اللغة الإنجليزية كلغة أجنبية (TEFL و TESOL).",
-                        bio: "",
-                        goal: "هدفي هو جعل تعلم اللغة الإنجليزية تجربة ممتعة وفعالة للجميع من خلال توفير محتوى تعليمي عالي الجودة يناسب جميع المستويات."
-                    }
-                };
+                await this.initializeStages();
                 
-                await this.database.ref(`sites/${this.siteId}`).set(initialData);
+                // Ensure all properties exist
+                this.state.lessons = this.state.lessons || {};
+                this.state.comments = this.state.comments || {};
+                this.state.likes = this.state.likes || {};
+                
+                await this.saveToFirebase();
+                this.showToast('تم إنشاء البيانات الأولية في السحابة', 'success');
             }
             
             setupRealtimeListener() {
-                // الاستماع للتغييرات على البيانات الرئيسية
+                // الاستماع للتغييرات في الوقت الحقيقي
                 this.database.ref(`sites/${this.siteId}`).on('value', (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         console.log('Firebase update received:', data);
                         
-                        // تحديث state مع الحفاظ على البيانات المحلية الحالية
-                        this.state = { ...this.state, ...data };
+                        // تحديث state مع البيانات الجديدة
+                        // Ensure all properties exist
+                        data.lessons = data.lessons || {};
+                        data.comments = data.comments || {};
+                        data.likes = data.likes || {};
+                        data.stages = data.stages || [];
+                        this.state = data;
                         this.updateUI();
                     }
                 }, (error) => {
                     console.error('Firebase listener error:', error);
+                    this.showToast('خطأ في استماع التحديثات من السحابة', 'error');
                 });
-            }
-            
-            async syncLocalData() {
-                // عند استعادة الاتصال، نحاول مزامنة البيانات المحلية مع السحابة
-                const localData = localStorage.getItem('english_teacher_data');
-                if (localData && this.isConnected) {
-                    try {
-                        const parsed = JSON.parse(localData);
-                        // يمكن هنا إضافة منطق للمزامنة الذكية
-                        this.showToast('جاري مزامنة البيانات مع السحابة...', 'info');
-                        await this.saveToFirebase();
-                    } catch (error) {
-                        console.error('Error syncing data:', error);
-                    }
-                }
-            }
-            
-            async loadFromLocalStorage() {
-                const savedData = localStorage.getItem('english_teacher_data');
-                if (savedData) {
-                    try {
-                        const parsed = JSON.parse(savedData);
-                        this.state = { ...this.state, ...parsed };
-                    } catch (e) {
-                        console.error('Error parsing saved data:', e);
-                    }
-                }
-                
-                // Initialize stages if empty
-                if (this.state.stages.length === 0) {
-                    await this.initializeStages();
-                    await this.saveToLocalStorage();
-                }
             }
             
             async initializeStages() {
@@ -1139,26 +1079,16 @@
             async saveToFirebase() {
                 try {
                     if (!this.isConnected) {
-                        throw new Error('No connection to Firebase');
+                        throw new Error('لا يوجد اتصال بالسحابة');
                     }
                     
-                    console.log('Saving to Firebase:', this.state);
+                    console.log('جاري حفظ البيانات في Firebase:', this.state);
                     await this.database.ref(`sites/${this.siteId}`).set(this.state);
-                    console.log('Successfully saved to Firebase');
+                    console.log('تم حفظ البيانات في Firebase بنجاح');
                     return true;
                 } catch (error) {
                     console.error('Error saving to Firebase:', error);
                     throw error;
-                }
-            }
-            
-            async saveToLocalStorage() {
-                try {
-                    localStorage.setItem('english_teacher_data', JSON.stringify(this.state));
-                    return true;
-                } catch (error) {
-                    console.error('Error saving to localStorage:', error);
-                    return false;
                 }
             }
             
@@ -1167,13 +1097,13 @@
                     if (this.isConnected) {
                         await this.saveToFirebase();
                         this.showToast('تم حفظ البيانات في السحابة', 'success');
+                        return true;
+                    } else {
+                        this.showToast('غير متصل بالسحابة', 'error');
+                        return false;
                     }
-                    
-                    // حفظ نسخة محلية أيضاً
-                    await this.saveToLocalStorage();
-                    
-                    return true;
                 } catch (error) {
+                    console.error('Error saving data:', error);
                     this.showToast('فشل في حفظ البيانات', 'error');
                     return false;
                 }
@@ -1213,13 +1143,13 @@
                     this.addComment(e);
                 });
                 
-                // تعديل: استخدام transaction للتعامل مع الإعجابات
+                // Likes - تعديل: حفظ مباشر في Firebase
                 document.getElementById('like-btn').addEventListener('click', () => {
-                    this.handleLikeDislikeTransaction('like');
+                    this.handleLike('like');
                 });
                 
                 document.getElementById('dislike-btn').addEventListener('click', () => {
-                    this.handleLikeDislikeTransaction('dislike');
+                    this.handleLike('dislike');
                 });
                 
                 // Admin forms
@@ -1365,10 +1295,11 @@
                     stageCol.className = 'col-md-4 col-lg-3 mb-4';
                     
                     let lessonCount = 0;
+                    const lessons = this.state.lessons || {};
                     for (let unit = 1; unit <= 6; unit++) {
                         for (let lesson = 1; lesson <= 6; lesson++) {
                             const lessonKey = `${stage.id}-${unit}-${lesson}`;
-                            if (this.state.lessons[lessonKey]) {
+                            if (lessons[lessonKey]) {
                                 lessonCount++;
                             }
                         }
@@ -1437,7 +1368,8 @@
                     const lessonsContainer = document.getElementById(`lessons-unit-${unit}`);
                     for (let lesson = 1; lesson <= 6; lesson++) {
                         const lessonKey = `${stageId}-${unit}-${lesson}`;
-                        const lessonData = this.state.lessons[lessonKey];
+                        const lessons = this.state.lessons || {};
+                        const lessonData = lessons[lessonKey];
                         const hasLesson = !!lessonData;
                         
                         const lessonCol = document.createElement('div');
@@ -1479,7 +1411,8 @@
                 document.getElementById('lessons').style.display = 'none';
                 document.getElementById('lesson-content').style.display = 'block';
                 
-                const lessonData = this.state.lessons[lessonKey];
+                const lessons = this.state.lessons || {};
+                const lessonData = lessons[lessonKey];
                 
                 // إخفاء جميع الحاويات أولاً
                 document.getElementById('html-lesson-container').style.display = 'none';
@@ -1553,22 +1486,24 @@
             }
             
             updateLikesDislikes(lessonKey) {
-                const likesData = this.state.likes[lessonKey] || { likes: 0, dislikes: 0 };
+                const likes = this.state.likes || {};
+                const likesData = likes[lessonKey] || { likes: 0, dislikes: 0 };
                 document.getElementById('like-count').textContent = likesData.likes || 0;
                 document.getElementById('dislike-count').textContent = likesData.dislikes || 0;
             }
             
             async loadComments(lessonKey) {
-                const comments = this.state.comments[lessonKey] || [];
+                const comments = this.state.comments || {};
+                const lessonComments = comments[lessonKey] || [];
                 const commentsList = document.getElementById('comments-list');
                 
-                if (comments.length === 0) {
+                if (lessonComments.length === 0) {
                     commentsList.innerHTML = '<p class="text-center text-muted">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
                     return;
                 }
                 
                 commentsList.innerHTML = '';
-                comments.forEach(comment => {
+                lessonComments.forEach(comment => {
                     const commentElement = document.createElement('div');
                     commentElement.className = 'comment-item';
                     commentElement.innerHTML = `
@@ -1608,27 +1543,38 @@
                     lessonKey: this.current.lesson
                 };
                 
+                // تحديث state المحلي أولاً
+                if (!this.state.comments) {
+                    this.state.comments = {};
+                }
+                
                 if (!this.state.comments[this.current.lesson]) {
                     this.state.comments[this.current.lesson] = [];
                 }
                 
                 this.state.comments[this.current.lesson].unshift(comment);
                 
-                await this.saveData();
-                e.target.reset();
-                await this.loadComments(this.current.lesson);
-                this.updateStatistics();
-                this.showToast('تم إضافة التعليق بنجاح', 'success');
+                // حفظ مباشرة في Firebase
+                try {
+                    await this.database.ref(`sites/${this.siteId}/comments/${this.current.lesson}`).set(this.state.comments[this.current.lesson]);
+                    
+                    e.target.reset();
+                    await this.loadComments(this.current.lesson);
+                    this.updateStatistics();
+                    this.showToast('تم إضافة التعليق بنجاح', 'success');
+                } catch (error) {
+                    console.error('Error saving comment:', error);
+                    this.showToast('فشل في إضافة التعليق', 'error');
+                }
             }
             
-            // دالة جديدة: استخدام transaction للتعامل مع الإعجابات
-            async handleLikeDislikeTransaction(type) {
+            async handleLike(type) {
                 if (!this.current.lesson) return;
                 
                 try {
                     const likeRef = this.database.ref(`sites/${this.siteId}/likes/${this.current.lesson}`);
                     
-                    // استخدام transaction لضمان التحديث الآمن
+                    // استخدام transaction للتأكد من عدم فقدان البيانات
                     likeRef.transaction((currentLikes) => {
                         if (currentLikes === null) {
                             currentLikes = { likes: 0, dislikes: 0 };
@@ -1647,6 +1593,9 @@
                             this.showToast('فشل في تسجيل الإعجاب', 'error');
                         } else if (committed) {
                             console.log('Transaction committed');
+                            if (!this.state.likes) {
+                                this.state.likes = {};
+                            }
                             this.state.likes[this.current.lesson] = snapshot.val();
                             this.updateLikesDislikes(this.current.lesson);
                             this.updateStatistics();
@@ -1656,28 +1605,8 @@
                     
                 } catch (error) {
                     console.error('Error in like/dislike:', error);
-                    
-                    // Fallback إلى الطريقة العادية إذا فشلت transaction
-                    await this.handleLikeDislikeFallback(type);
+                    this.showToast('فشل في تسجيل الإعجاب', 'error');
                 }
-            }
-            
-            // دالة احتياطية للتعامل مع الإعجابات
-            async handleLikeDislikeFallback(type) {
-                const likesData = this.state.likes[this.current.lesson] || { likes: 0, dislikes: 0 };
-                
-                if (type === 'like') {
-                    likesData.likes = (likesData.likes || 0) + 1;
-                } else {
-                    likesData.dislikes = (likesData.dislikes || 0) + 1;
-                }
-                
-                this.state.likes[this.current.lesson] = likesData;
-                
-                await this.saveData();
-                this.updateLikesDislikes(this.current.lesson);
-                this.updateStatistics();
-                this.showToast(`تم تسجيل ${type === 'like' ? 'الإعجاب' : 'عدم الإعجاب'} بنجاح`, 'success');
             }
             
             showLoginModal() {
@@ -1798,10 +1727,10 @@
                     await this.database.ref(`sites/${this.siteId}/lessons/${lessonKey}`).set(lessonData);
                     
                     // تحديث state المحلي
+                    if (!this.state.lessons) {
+                        this.state.lessons = {};
+                    }
                     this.state.lessons[lessonKey] = lessonData;
-                    
-                    // حفظ نسخة محلية
-                    await this.saveToLocalStorage();
                     
                     this.showToast('تم حفظ الدرس بنجاح!', 'success');
                     e.target.reset();
@@ -1862,11 +1791,13 @@
                     // الحصول على رابط الصورة
                     const downloadURL = await storageRef.getDownloadURL();
                     
-                    // حفظ الرابط في البيانات
+                    // حفظ الرابط في Firebase
+                    await this.database.ref(`sites/${this.siteId}/siteSettings/logoUrl`).set(downloadURL);
+                    await this.database.ref(`sites/${this.siteId}/siteSettings/logo`).set(file.name);
+                    
+                    // تحديث state المحلي
                     this.state.siteSettings.logoUrl = downloadURL;
                     this.state.siteSettings.logo = file.name;
-                    
-                    await this.saveData();
                     
                     // تحديث المعاينة
                     this.updateLogoPreview();
@@ -1906,11 +1837,13 @@
                     // الحصول على رابط الصورة
                     const downloadURL = await storageRef.getDownloadURL();
                     
-                    // حفظ الرابط في البيانات
+                    // حفظ الرابط في Firebase
+                    await this.database.ref(`sites/${this.siteId}/teacherInfo/imageUrl`).set(downloadURL);
+                    await this.database.ref(`sites/${this.siteId}/teacherInfo/image`).set(file.name);
+                    
+                    // تحديث state المحلي
                     this.state.teacherInfo.imageUrl = downloadURL;
                     this.state.teacherInfo.image = file.name;
-                    
-                    await this.saveData();
                     
                     // تحديث المعاينة
                     this.updateTeacherImagePreview();
@@ -1964,23 +1897,25 @@
             }
             
             updateStatistics() {
-                const totalLessons = Object.keys(this.state.lessons).length;
+                const totalLessons = Object.keys(this.state.lessons || {}).length;
                 if (document.getElementById('total-lessons')) {
                     document.getElementById('total-lessons').textContent = totalLessons;
                 }
                 document.getElementById('total-lessons-display').textContent = totalLessons;
                 
                 let totalComments = 0;
-                for (const lessonKey in this.state.comments) {
-                    totalComments += this.state.comments[lessonKey].length;
+                const comments = this.state.comments || {};
+                for (const lessonKey in comments) {
+                    totalComments += (comments[lessonKey] || []).length;
                 }
                 if (document.getElementById('total-comments')) {
                     document.getElementById('total-comments').textContent = totalComments;
                 }
                 
                 let totalLikes = 0;
-                for (const lessonKey in this.state.likes) {
-                    totalLikes += (this.state.likes[lessonKey].likes || 0);
+                const likes = this.state.likes || {};
+                for (const lessonKey in likes) {
+                    totalLikes += ((likes[lessonKey] && likes[lessonKey].likes) || 0);
                 }
                 if (document.getElementById('total-likes')) {
                     document.getElementById('total-likes').textContent = totalLikes;
@@ -1988,7 +1923,7 @@
             }
             
             updateTotalLessonsDisplay() {
-                const totalLessons = Object.keys(this.state.lessons).length;
+                const totalLessons = Object.keys(this.state.lessons || {}).length;
                 document.getElementById('total-lessons-display').textContent = totalLessons;
             }
             
@@ -1999,16 +1934,17 @@
                 const newPassword = document.getElementById('admin-password-input').value.trim();
                 
                 if (siteTitle) {
+                    await this.database.ref(`sites/${this.siteId}/siteSettings/title`).set(siteTitle);
                     this.state.siteSettings.title = siteTitle;
                     this.updateSiteTitle();
                 }
                 
                 if (newPassword) {
+                    await this.database.ref(`sites/${this.siteId}/siteSettings/password`).set(newPassword);
                     this.state.siteSettings.password = newPassword;
                     document.getElementById('admin-password-input').value = '';
                 }
                 
-                await this.saveData();
                 this.showToast('تم حفظ إعدادات الموقع بنجاح!', 'success');
             }
             
@@ -2020,12 +1956,18 @@
                 const bio = document.getElementById('teacher-bio-input').value.trim();
                 const goal = document.getElementById('teacher-goal-input').value.trim();
                 
+                // حفظ مباشرة في Firebase
+                await this.database.ref(`sites/${this.siteId}/teacherInfo/name`).set(teacherName);
+                await this.database.ref(`sites/${this.siteId}/teacherInfo/qualifications`).set(qualifications);
+                await this.database.ref(`sites/${this.siteId}/teacherInfo/bio`).set(bio);
+                await this.database.ref(`sites/${this.siteId}/teacherInfo/goal`).set(goal);
+                
+                // تحديث state المحلي
                 this.state.teacherInfo.name = teacherName;
                 this.state.teacherInfo.qualifications = qualifications;
                 this.state.teacherInfo.bio = bio;
                 this.state.teacherInfo.goal = goal;
                 
-                await this.saveData();
                 this.updateTeacherInfo();
                 this.showToast('تم حفظ معلومات المدرس بنجاح!', 'success');
             }
@@ -2075,8 +2017,11 @@
             
             async toggleSiteAvailability(e) {
                 const isAvailable = e.target.checked;
+                
+                // حفظ مباشرة في Firebase
+                await this.database.ref(`sites/${this.siteId}/siteSettings/isAvailable`).set(isAvailable);
+                
                 this.state.siteSettings.isAvailable = isAvailable;
-                await this.saveData();
                 this.updateSiteStatus();
             }
             
@@ -2139,17 +2084,36 @@
                         }
                         
                         if (confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟')) {
+                            this.showLoading('جاري استيراد البيانات...');
+                            
+                            // Ensure all properties exist
+                            importedData.lessons = importedData.lessons || {};
+                            importedData.comments = importedData.comments || {};
+                            importedData.likes = importedData.likes || {};
+                            importedData.stages = importedData.stages || [];
+                            
+                            // حفظ البيانات المستوردة في Firebase
+                            await this.database.ref(`sites/${this.siteId}`).set(importedData);
+                            
+                            // تحديث state المحلي
                             this.state = importedData;
-                            await this.saveData();
+                            
                             this.updateUI();
                             this.showToast('تم استيراد البيانات بنجاح', 'success');
                         }
                     } catch (error) {
                         this.showToast('خطأ في قراءة الملف. يرجى التأكد من صحة تنسيق JSON.', 'error');
+                    } finally {
+                        this.hideLoading();
                     }
                 };
                 reader.readAsText(file);
                 e.target.value = '';
+            }
+            
+            async loadFromLocalStorage() {
+                // لن نستخدم localStorage في هذا الإصدار، سنعتمد كلياً على Firebase
+                console.log('Working with Firebase only');
             }
             
             showCloudStatus(text, isConnected) {
