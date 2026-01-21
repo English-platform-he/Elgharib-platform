@@ -16,6 +16,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- CodeMirror for HTML Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    
     <style>
         :root {
             --primary-dark: #1e3a8a;
@@ -129,6 +133,25 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-saving {
+            position: relative;
+            opacity: 0.8;
+        }
+
+        .btn-saving::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
         /* Comments */
@@ -405,6 +428,158 @@
             color: var(--warning);
             font-weight: 600;
         }
+        
+        /* رسالة النجاح */
+        .success-message {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            border-right: 4px solid var(--success);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Required field indicator */
+        .required-field::after {
+            content: " *";
+            color: var(--danger);
+        }
+        
+        /* محرر HTML */
+        .html-editor-container {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .html-editor-toolbar {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .html-editor-toolbar button {
+            padding: 5px 10px;
+            font-size: 13px;
+        }
+        
+        .html-editor {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 400px;
+            padding: 15px;
+            border: none;
+            resize: vertical;
+            width: 100%;
+            background-color: #f8f9fa;
+        }
+        
+        .html-preview-frame {
+            font-family: 'Cairo', sans-serif;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 500px;
+            overflow: auto;
+        }
+        
+        /* CodeMirror customization */
+        .CodeMirror {
+            height: 400px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        
+        /* أزرار القوالب */
+        .template-btn {
+            margin: 2px;
+        }
+        
+        /* تبويب محرر الكود */
+        .code-editor-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 10px;
+        }
+        
+        .code-editor-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 8px 15px;
+        }
+        
+        .code-editor-tabs .nav-link.active {
+            color: var(--primary-blue);
+            background-color: transparent;
+            border-bottom-color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        /* حجم الكود */
+        .code-size-info {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: left;
+            margin-top: 5px;
+        }
+        
+        /* معاينة الكود */
+        .preview-container {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            max-height: 400px;
+            overflow: auto;
+        }
+        
+        /* تنسيق الكود */
+        .code-tag {
+            color: #d73a49;
+        }
+        
+        .code-attr {
+            color: #005cc5;
+        }
+        
+        .code-string {
+            color: #032f62;
+        }
+        
+        /* رسالة الحفظ */
+        .saving-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -529,6 +704,11 @@
                                     </div>
                                 </div>
                                 <div id="lesson-description" class="mt-4"></div>
+                            </div>
+                            
+                            <!-- Generated HTML Container -->
+                            <div id="generated-html-container" style="display: none;">
+                                <!-- سيتم إنشاء محتوى HTML هنا تلقائياً -->
                             </div>
                             
                             <!-- External Link Button -->
@@ -702,6 +882,9 @@
             <div class="progress-text" id="upload-progress-text">0%</div>
         </div>
         
+        <!-- Success Message Container -->
+        <div id="lesson-success-message" style="display: none;"></div>
+        
         <div class="row">
             <div class="col-lg-8">
                 <div class="admin-card card mb-4">
@@ -710,13 +893,13 @@
                         <form id="lesson-form">
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label for="admin-stage" class="form-label">المرحلة</label>
+                                    <label for="admin-stage" class="form-label required-field">المرحلة</label>
                                     <select class="form-select" id="admin-stage" required>
                                         <!-- Options will be populated -->
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="admin-unit" class="form-label">الوحدة</label>
+                                    <label for="admin-unit" class="form-label required-field">الوحدة</label>
                                     <select class="form-select" id="admin-unit" required>
                                         <option value="1">الوحدة 1</option>
                                         <option value="2">الوحدة 2</option>
@@ -727,7 +910,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="admin-lesson" class="form-label">الدرس</label>
+                                    <label for="admin-lesson" class="form-label required-field">الدرس</label>
                                     <select class="form-select" id="admin-lesson" required>
                                         <option value="1">الدرس 1</option>
                                         <option value="2">الدرس 2</option>
@@ -739,23 +922,96 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="lesson-title-input" class="form-label">عنوان الدرس</label>
-                                <input type="text" class="form-control" id="lesson-title-input" required>
+                                <label for="lesson-title-input" class="form-label required-field">عنوان الدرس</label>
+                                <input type="text" class="form-control" id="lesson-title-input" placeholder="أدخل عنوان الدرس" required>
                             </div>
                             <div class="mb-3">
                                 <label for="youtube-url" class="form-label">رابط فيديو YouTube (اختياري)</label>
                                 <input type="text" class="form-control" id="youtube-url" placeholder="https://www.youtube.com/watch?v=...">
                             </div>
                             <div class="mb-3">
-                                <label for="lesson-description-input" class="form-label">وصف الدرس</label>
-                                <textarea class="form-control" id="lesson-description-input" rows="3" required></textarea>
+                                <label for="lesson-description-input" class="form-label required-field">وصف الدرس</label>
+                                <textarea class="form-control" id="lesson-description-input" rows="3" placeholder="أدخل وصف الدرس هنا..." required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="external-link" class="form-label">رابط خارجي للدرس (اختياري)</label>
                                 <input type="text" class="form-control" id="external-link" placeholder="https://...">
                             </div>
+                            
+                            <!-- HTML Content Editor -->
+                            <div class="mb-4">
+                                <label class="form-label">محتوى HTML للدرس (يتم حفظه مباشرة في قاعدة البيانات)</label>
+                                
+                                <!-- Editor Tabs -->
+                                <ul class="nav nav-tabs code-editor-tabs mb-3" id="htmlEditorTabs">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" type="button" data-bs-toggle="tab" data-bs-target="#htmlEditor">محرر HTML</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" type="button" data-bs-toggle="tab" data-bs-target="#htmlPreview">معاينة</button>
+                                    </li>
+                                </ul>
+                                
+                                <!-- Tab Content -->
+                                <div class="tab-content">
+                                    <!-- HTML Editor Tab -->
+                                    <div class="tab-pane fade show active" id="htmlEditor">
+                                        <!-- Editor Toolbar -->
+                                        <div class="html-editor-toolbar mb-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHtmlTag('h1')">
+                                                <i class="bi bi-type-h1"></i> عنوان
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHtmlTag('p')">
+                                                <i class="bi bi-text-paragraph"></i> فقرة
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHtmlTag('ul')">
+                                                <i class="bi bi-list-ul"></i> قائمة
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHtmlTag('table')">
+                                                <i class="bi bi-table"></i> جدول
+                                            </button>
+                                            <div class="dropdown d-inline">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-file-code"></i> قوالب
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="insertTemplate('basic')">قالب أساسي</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="insertTemplate('vocabulary')">قالب مفردات</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="insertTemplate('exercise')">قالب تمارين</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="insertTemplate('quiz')">قالب اختبار</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="clearHtmlEditor()"><i class="bi bi-trash"></i> مسح المحتوى</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- HTML Editor -->
+                                        <textarea class="html-editor" id="html-content-input" rows="15" 
+                                                  placeholder="أدخل كود HTML كامل هنا... يمكنك إضافة CSS و JS داخل نفس الملف"></textarea>
+                                        
+                                        <!-- Code Size Info -->
+                                        <div class="code-size-info">
+                                            <span id="char-count">0</span> حرف | 
+                                            <span id="line-count">0</span> سطر
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Preview Tab -->
+                                    <div class="tab-pane fade" id="htmlPreview">
+                                        <div class="preview-container" id="html-preview-frame">
+                                            <p class="text-muted text-center">المعاينة ستظهر هنا...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <small class="form-text text-muted">
+                                    يمكنك إضافة CSS و JS داخل نفس الملف. استخدم &lt;style&gt; و &lt;script&gt; داخل &lt;body&gt;
+                                </small>
+                            </div>
+                            
+                            <!-- File Upload (Optional - Old Method) -->
                             <div class="mb-3">
-                                <label class="form-label">رفع ملف HTML كامل للدرس (اختياري)</label>
+                                <label class="form-label">أو رفع ملف HTML كامل للدرس (اختياري - الطريقة القديمة)</label>
                                 <div class="file-upload-container" id="html-file-upload-container">
                                     <i class="bi bi-file-earmark-code display-4 text-muted mb-3"></i>
                                     <p>اسحب وأفلت ملف HTML هنا<br>أو انقر للاختيار</p>
@@ -774,7 +1030,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">حفظ الدرس في السحابة</button>
+                            
+                            <button type="submit" class="btn btn-primary w-100" id="save-lesson-btn">
+                                حفظ الدرس في السحابة
+                            </button>
+                            <div id="lesson-form-message" class="mt-3"></div>
                         </form>
                     </div>
                 </div>
@@ -970,6 +1230,7 @@
                 this.database = null;
                 this.storage = null;
                 this.isConnected = false;
+                this.isUploading = false;
             }
             
             async initialize() {
@@ -1264,6 +1525,31 @@
                 document.getElementById('data-file-input').addEventListener('change', (e) => {
                     this.importData(e);
                 });
+                
+                // HTML Editor Events
+                const htmlContentInput = document.getElementById('html-content-input');
+                if (htmlContentInput) {
+                    htmlContentInput.addEventListener('input', () => {
+                        this.updateCodeStats();
+                        this.updateHtmlPreview();
+                    });
+                    
+                    // Update stats on load
+                    setTimeout(() => {
+                        this.updateCodeStats();
+                        this.updateHtmlPreview();
+                    }, 500);
+                }
+                
+                // Tab change events
+                const htmlEditorTabs = document.querySelectorAll('#htmlEditorTabs button');
+                htmlEditorTabs.forEach(tab => {
+                    tab.addEventListener('shown.bs.tab', () => {
+                        if (tab.getAttribute('data-bs-target') === '#htmlPreview') {
+                            this.updateHtmlPreview();
+                        }
+                    });
+                });
             }
             
             async initializeUI() {
@@ -1434,25 +1720,35 @@
                 const lessons = this.state.lessons || {};
                 const lessonData = lessons[lessonKey];
                 
+                // إخفاء جميع الحاويات أولاً
                 document.getElementById('html-lesson-container').style.display = 'none';
                 document.getElementById('video-container').style.display = 'none';
                 document.getElementById('text-content-container').style.display = 'none';
+                document.getElementById('generated-html-container').style.display = 'none';
                 document.getElementById('external-link-container').style.display = 'none';
                 
                 if (lessonData) {
                     document.getElementById('lesson-title').textContent = lessonData.title;
                     document.getElementById('lesson-date').textContent = new Date(lessonData.date).toLocaleDateString('ar-EG');
                     
-                    if (lessonData.htmlFileUrl) {
+                    // عرض محتوى HTML المخزن مباشرة في قاعدة البيانات
+                    if (lessonData.htmlContent) {
+                        console.log('عرض محتوى HTML من قاعدة البيانات');
+                        this.showGeneratedHtmlContent(lessonData.htmlContent);
+                        
+                    } else if (lessonData.htmlFileUrl) {
+                        // عرض ملف HTML (الطريقة القديمة)
                         const htmlFrame = document.getElementById('html-lesson-frame');
                         htmlFrame.src = lessonData.htmlFileUrl;
                         document.getElementById('html-lesson-container').style.display = 'block';
                         this.showToast('جاري تحميل الدرس التفاعلي...', 'info');
                     } else if (lessonData.externalLink) {
+                        // عرض رابط خارجي
                         const externalLinkBtn = document.getElementById('external-link-btn');
                         externalLinkBtn.href = lessonData.externalLink;
                         document.getElementById('external-link-container').style.display = 'block';
                     } else if (lessonData.youtubeUrl) {
+                        // عرض فيديو YouTube
                         const videoId = this.extractYouTubeId(lessonData.youtubeUrl);
                         if (videoId) {
                             const videoContainer = document.getElementById('video-container');
@@ -1467,6 +1763,7 @@
                         }
                         document.getElementById('text-content-container').style.display = 'block';
                     } else {
+                        // عرض النص فقط
                         document.getElementById('text-content-container').style.display = 'block';
                     }
                     
@@ -1482,6 +1779,116 @@
                 this.updateLikesDislikes(lessonKey);
                 await this.loadComments(lessonKey);
                 document.getElementById('lesson-content').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // عرض محتوى HTML المولّد من قاعدة البيانات
+            showGeneratedHtmlContent(htmlContent) {
+                const container = document.getElementById('generated-html-container');
+                
+                // إنشاء iframe آمن
+                container.innerHTML = `
+                    <div class="generated-html-frame" style="width: 100%; min-height: 500px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
+                        <iframe sandbox="allow-scripts allow-same-origin" 
+                                style="width: 100%; height: 100%; border: none; min-height: 500px;"></iframe>
+                    </div>
+                `;
+                
+                const iframe = container.querySelector('iframe');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // إنشاء صفحة HTML كاملة مع التنسيق المناسب
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html dir="rtl" lang="ar">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>درس اللغة الإنجليزية</title>
+                        <style>
+                            body {
+                                font-family: 'Cairo', sans-serif;
+                                line-height: 1.8;
+                                color: #333;
+                                padding: 20px;
+                                background-color: #f9fafb;
+                                margin: 0;
+                            }
+                            
+                            .lesson-content {
+                                max-width: 800px;
+                                margin: 0 auto;
+                                background-color: white;
+                                padding: 30px;
+                                border-radius: 10px;
+                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            }
+                            
+                            h1, h2, h3, h4 {
+                                color: #1e3a8a;
+                                border-bottom: 2px solid #e2e8f0;
+                                padding-bottom: 10px;
+                                margin-top: 30px;
+                            }
+                            
+                            p {
+                                margin-bottom: 15px;
+                            }
+                            
+                            ul, ol {
+                                margin-right: 20px;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .example {
+                                background-color: #f0f9ff;
+                                border-right: 4px solid #0ea5e9;
+                                padding: 15px;
+                                margin: 20px 0;
+                                border-radius: 5px;
+                            }
+                            
+                            .exercise {
+                                background-color: #f0fdf4;
+                                border: 2px solid #22c55e;
+                                padding: 20px;
+                                margin: 20px 0;
+                                border-radius: 8px;
+                            }
+                            
+                            .vocabulary {
+                                background-color: #fef3c7;
+                                border: 1px solid #f59e0b;
+                                padding: 15px;
+                                margin: 15px 0;
+                                border-radius: 5px;
+                            }
+                            
+                            .highlight {
+                                background-color: #fef3c7;
+                                padding: 2px 5px;
+                                border-radius: 3px;
+                            }
+                            
+                            @media (max-width: 768px) {
+                                .lesson-content {
+                                    padding: 15px;
+                                    margin: 10px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="lesson-content">
+                            ${htmlContent}
+                        </div>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
+                
+                container.style.display = 'block';
+                this.showToast('تم تحميل الدرس بنجاح', 'success');
             }
             
             extractYouTubeId(url) {
@@ -1689,72 +2096,220 @@
             
             async saveLesson(e) {
                 e.preventDefault();
+                console.log('بدء عملية حفظ الدرس...');
                 
-                const stageId = parseInt(document.getElementById('admin-stage').value);
-                const unitId = parseInt(document.getElementById('admin-unit').value);
-                const lessonId = parseInt(document.getElementById('admin-lesson').value);
-                const title = document.getElementById('lesson-title-input').value.trim();
-                const youtubeUrl = document.getElementById('youtube-url').value.trim();
-                const description = document.getElementById('lesson-description-input').value.trim();
-                const externalLink = document.getElementById('external-link').value.trim();
-                
-                if (!title) {
-                    this.showToast('الرجاء إدخال عنوان للدرس', 'warning');
+                // التحقق من الاتصال
+                if (!this.isConnected) {
+                    this.showToast('غير متصل بالسحابة. الرجاء التحقق من اتصال الإنترنت', 'error');
                     return;
                 }
                 
-                const lessonKey = `${stageId}-${unitId}-${lessonId}`;
-                const lessonData = {
-                    title: title,
-                    description: description,
-                    youtubeUrl: youtubeUrl,
-                    externalLink: externalLink,
-                    date: new Date().toISOString(),
-                    createdBy: 'admin'
-                };
-                
-                const htmlFileInput = document.getElementById('html-file');
-                if (htmlFileInput.files.length > 0) {
-                    try {
-                        this.showUploadProgress(0, 'جاري رفع ملف HTML...');
-                        const htmlFileUrl = await this.uploadHtmlFile(htmlFileInput.files[0], lessonKey);
-                        lessonData.htmlFileUrl = htmlFileUrl;
-                        lessonData.htmlFileName = htmlFileInput.files[0].name;
-                        this.removeHtmlFile();
-                        this.hideUploadProgress();
-                    } catch (error) {
-                        console.error('Error uploading HTML file:', error);
-                        this.hideUploadProgress();
-                        this.showToast(`فشل في رفع ملف HTML: ${error.message}`, 'error');
-                        return;
-                    }
-                }
+                const saveButton = document.getElementById('save-lesson-btn');
+                const originalText = saveButton.innerHTML;
                 
                 try {
+                    // تغيير حالة الزر
+                    saveButton.disabled = true;
+                    saveButton.classList.add('btn-saving');
+                    
+                    // جمع البيانات من النموذج
+                    const stageId = parseInt(document.getElementById('admin-stage').value);
+                    const unitId = parseInt(document.getElementById('admin-unit').value);
+                    const lessonId = parseInt(document.getElementById('admin-lesson').value);
+                    const title = document.getElementById('lesson-title-input').value.trim();
+                    const youtubeUrl = document.getElementById('youtube-url').value.trim();
+                    const description = document.getElementById('lesson-description-input').value.trim();
+                    const externalLink = document.getElementById('external-link').value.trim();
+                    const htmlContent = document.getElementById('html-content-input')?.value.trim() || '';
+                    
+                    // التحقق من المدخلات الأساسية
+                    if (!title) {
+                        this.showToast('الرجاء إدخال عنوان للدرس', 'warning');
+                        document.getElementById('lesson-title-input').focus();
+                        throw new Error('عنوان الدرس مطلوب');
+                    }
+                    
+                    if (!description) {
+                        this.showToast('الرجاء إدخال وصف للدرس', 'warning');
+                        document.getElementById('lesson-description-input').focus();
+                        throw new Error('وصف الدرس مطلوب');
+                    }
+                    
+                    // إنشاء مفتاح الدرس
+                    const lessonKey = `${stageId}-${unitId}-${lessonId}`;
+                    console.log('مفتاح الدرس:', lessonKey);
+                    
+                    // تحضير بيانات الدرس
+                    const lessonData = {
+                        title: title,
+                        description: description,
+                        date: new Date().toISOString(),
+                        createdBy: 'admin',
+                        stage: stageId,
+                        unit: unitId,
+                        lesson: lessonId,
+                        hasContent: false,
+                        // إضافة وقت التحديث للمراقبة
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    // إضافة الروابط الاختيارية إذا كانت موجودة
+                    if (youtubeUrl) {
+                        lessonData.youtubeUrl = youtubeUrl;
+                        lessonData.hasContent = true;
+                    }
+                    
+                    if (externalLink) {
+                        lessonData.externalLink = externalLink;
+                        lessonData.hasContent = true;
+                    }
+                    
+                    // إضافة محتوى HTML إذا كان موجوداً - الطريقة الجديدة
+                    if (htmlContent) {
+                        lessonData.htmlContent = htmlContent;
+                        lessonData.hasContent = true;
+                        lessonData.contentType = 'html';
+                        lessonData.htmlSize = htmlContent.length;
+                        console.log('تم إضافة محتوى HTML بحجم:', htmlContent.length, 'حرف');
+                    }
+                    
+                    // رفع ملف HTML إذا تم اختياره (الطريقة القديمة - اختياري)
+                    const htmlFileInput = document.getElementById('html-file');
+                    if (htmlFileInput.files.length > 0) {
+                        console.log('جاري رفع ملف HTML (الطريقة القديمة)...');
+                        try {
+                            this.showUploadProgress(0, 'جاري رفع ملف HTML...');
+                            const htmlFileUrl = await this.uploadHtmlFile(htmlFileInput.files[0], lessonKey);
+                            lessonData.htmlFileUrl = htmlFileUrl;
+                            lessonData.htmlFileName = htmlFileInput.files[0].name;
+                            lessonData.hasContent = true;
+                            lessonData.contentType = 'file';
+                            this.removeHtmlFile();
+                            console.log('تم رفع ملف HTML بنجاح');
+                        } catch (error) {
+                            console.error('Error uploading HTML file:', error);
+                            this.showToast(`فشل في رفع ملف HTML: ${error.message}`, 'error');
+                        } finally {
+                            this.hideUploadProgress();
+                        }
+                    }
+                    
+                    // حفظ الدرس في Firebase
+                    console.log('جاري حفظ الدرس في Firebase...', lessonData);
+                    
                     this.showLoading('جاري حفظ الدرس في السحابة...');
                     
-                    await this.database.ref(`sites/${this.siteId}/lessons/${lessonKey}`).set(lessonData);
+                    try {
+                        // حفظ الدرس في Firebase
+                        await this.database.ref(`sites/${this.siteId}/lessons/${lessonKey}`).set(lessonData);
+                        console.log('✅ تم حفظ الدرس في Firebase بنجاح!');
+                    } catch (firebaseError) {
+                        console.error('Firebase error:', firebaseError);
+                        throw new Error(`فشل الاتصال بقاعدة البيانات: ${firebaseError.message}`);
+                    }
                     
+                    // تحديث state المحلي
                     if (!this.state.lessons) {
                         this.state.lessons = {};
                     }
                     this.state.lessons[lessonKey] = lessonData;
                     
-                    this.showToast('تم حفظ الدرس بنجاح!', 'success');
+                    // إظهار رسالة النجاح
+                    const successMessage = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>تم حفظ الدرس بنجاح!</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>العنوان: ${title}</li>
+                                <li>المرحلة: ${stageId} | الوحدة: ${unitId} | الدرس: ${lessonId}</li>
+                                <li>المفتاح: ${lessonKey}</li>
+                                ${htmlContent ? `<li>تم حفظ محتوى HTML (${htmlContent.length} حرف)</li>` : ''}
+                                <li>تم الحفظ في: ${new Date().toLocaleString('ar-EG')}</li>
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    
+                    document.getElementById('lesson-form-message').innerHTML = successMessage;
+                    
+                    this.showToast(`تم حفظ الدرس "${title}" بنجاح! ✓`, 'success');
+                    
+                    // إعادة تعيين النموذج
                     e.target.reset();
+                    
+                    // تحديث الإحصائيات
                     this.updateStatistics();
                     
-                    if (this.current.lesson === lessonKey) {
-                        this.showLesson(lessonKey);
-                    }
+                    // تحديث عرض المراحل ليعكس العدد الجديد
+                    await this.displayStages();
                     
-                    this.displayStages();
+                    // تحديث اختيارات المراحل
+                    this.populateStageSelects();
+                    
+                    console.log('✅ عملية حفظ الدرس اكتملت بنجاح');
                     
                 } catch (error) {
-                    console.error('Error saving lesson:', error);
-                    this.showToast('فشل في حفظ الدرس', 'error');
+                    console.error('❌ Error saving lesson:', error);
+                    
+                    // إظهار رسالة الخطأ في النموذج
+                    const formMessage = document.getElementById('lesson-form-message');
+                    formMessage.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>فشل في حفظ الدرس!</strong><br>
+                            ${error.message || 'حدث خطأ غير معروف'}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    
+                    this.showToast(`❌ فشل في حفظ الدرس: ${error.message || 'حدث خطأ'}`, 'error');
+                    
                 } finally {
+                    // إعادة حالة الزر إلى الأصلية
+                    saveButton.disabled = false;
+                    saveButton.classList.remove('btn-saving');
+                    saveButton.innerHTML = originalText;
                     this.hideLoading();
+                }
+            }
+            
+            // تحديث إحصائيات الكود
+            updateCodeStats() {
+                const htmlContentInput = document.getElementById('html-content-input');
+                const charCount = document.getElementById('char-count');
+                const lineCount = document.getElementById('line-count');
+                
+                if (htmlContentInput && charCount && lineCount) {
+                    const content = htmlContentInput.value;
+                    const chars = content.length;
+                    const lines = content.split('\n').length;
+                    
+                    charCount.textContent = chars.toLocaleString('ar-EG');
+                    lineCount.textContent = lines.toLocaleString('ar-EG');
+                }
+            }
+            
+            // تحديث معاينة HTML
+            updateHtmlPreview() {
+                const htmlContentInput = document.getElementById('html-content-input');
+                const previewFrame = document.getElementById('html-preview-frame');
+                
+                if (htmlContentInput && previewFrame) {
+                    const content = htmlContentInput.value.trim();
+                    
+                    if (!content) {
+                        previewFrame.innerHTML = '<p class="text-muted text-center">لا يوجد محتوى للمعاينة</p>';
+                        return;
+                    }
+                    
+                    // إنشاء صفحة معاينة
+                    const previewHtml = `
+                        <div style="padding: 20px; font-family: 'Cairo', sans-serif;">
+                            ${content}
+                        </div>
+                    `;
+                    
+                    previewFrame.innerHTML = previewHtml;
                 }
             }
             
@@ -1962,7 +2517,7 @@
                 }
             }
             
-            // رفع ملف HTML مع متابعة التقدم
+            // رفع ملف HTML مع متابعة التقدم (الطريقة القديمة)
             async uploadHtmlFile(file, lessonKey) {
                 if (!this.isConnected) {
                     throw new Error('لا يوجد اتصال بالسحابة');
@@ -2191,17 +2746,19 @@
                     const file = fileInput.files[0];
                     fileName.textContent = file.name;
                     
-                    // عرض حجم الملف
                     const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
                     fileSize.textContent = `حجم الملف: ${sizeInMB} MB`;
                     
                     if (file.size > 20 * 1024 * 1024) {
                         fileSize.className = 'file-size-info file-size-warning';
+                        this.showToast('الملف كبير جداً، قد يستغرق رفعه وقتاً طويلاً', 'warning');
                     } else {
                         fileSize.className = 'file-size-info';
                     }
                     
                     fileInfo.style.display = 'block';
+                    
+                    console.log('تم اختيار ملف:', file.name, 'الحجم:', sizeInMB, 'MB');
                 }
             }
             
@@ -2359,7 +2916,243 @@
             }
         }
 
+        // ============================================
+        // دوال مساعدة لمحرر HTML
+        // ============================================
+
+        // إضافة وسم HTML
+        function insertHtmlTag(tag) {
+            const editor = document.getElementById('html-content-input');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            let insertText = '';
+            
+            switch(tag) {
+                case 'h1':
+                    insertText = selectedText ? `<h1>${selectedText}</h1>` : '<h1>عنوان رئيسي</h1>';
+                    break;
+                case 'p':
+                    insertText = selectedText ? `<p>${selectedText}</p>` : '<p>نص الفقرة هنا...</p>';
+                    break;
+                case 'ul':
+                    insertText = `<ul>\n  <li>عنصر 1</li>\n  <li>عنصر 2</li>\n  <li>عنصر 3</li>\n</ul>`;
+                    break;
+                case 'table':
+                    insertText = `<table border="1" style="width:100%; border-collapse: collapse;">\n  <tr>\n    <th>العنوان 1</th>\n    <th>العنوان 2</th>\n  </tr>\n  <tr>\n    <td>بيانات 1</td>\n    <td>بيانات 2</td>\n  </tr>\n</table>`;
+                    break;
+            }
+            
+            editor.value = editor.value.substring(0, start) + insertText + editor.value.substring(end);
+            editor.focus();
+            editor.selectionStart = editor.selectionEnd = start + insertText.length;
+            
+            // تحديث الإحصائيات والمعاينة
+            if (window.app) {
+                window.app.updateCodeStats();
+                window.app.updateHtmlPreview();
+            }
+        }
+
+        // إضافة قالب HTML
+        function insertTemplate(templateName) {
+            const editor = document.getElementById('html-content-input');
+            let template = '';
+            
+            switch(templateName) {
+                case 'basic':
+                    template = `<!-- قالب درس أساسي -->
+<h1>عنوان الدرس</h1>
+
+<p>مرحباً بكم في هذا الدرس التعليمي. في هذا الدرس سنتعلم:</p>
+
+<ul>
+    <li>النقطة الأولى</li>
+    <li>النقطة الثانية</li>
+    <li>النقطة الثالثة</li>
+</ul>
+
+<h2>الجزء الأول</h2>
+<p>شرح الجزء الأول من الدرس...</p>
+
+<div style="background-color: #f0f9ff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+    <strong>مثال:</strong> هذا مثال توضيحي للدرس
+</div>
+
+<h2>التمرين</h2>
+<div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; border: 2px solid #22c55e;">
+    <p><strong>السؤال:</strong> أكمل الجملة التالية...</p>
+    <p style="color: #15803d; margin-top: 10px;"><strong>الإجابة:</strong> سوف تظهر هنا...</p>
+</div>`;
+                    break;
+                    
+                case 'vocabulary':
+                    template = `<!-- قالب مفردات -->
+<h1>مفردات جديدة</h1>
+
+<p>في هذا الدرس سنتعلم المفردات التالية:</p>
+
+<table border="1" style="width:100%; border-collapse: collapse;">
+  <tr style="background-color: #f3f4f6;">
+    <th style="padding: 10px; text-align: right;">الكلمة الإنجليزية</th>
+    <th style="padding: 10px; text-align: right;">المعنى العربي</th>
+    <th style="padding: 10px; text-align: right;">المثال</th>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">Hello</td>
+    <td style="padding: 10px;">مرحباً</td>
+    <td style="padding: 10px;">Hello, how are you?</td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">Goodbye</td>
+    <td style="padding: 10px;">مع السلامة</td>
+    <td style="padding: 10px;">Goodbye, see you tomorrow</td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">Thank you</td>
+    <td style="padding: 10px;">شكراً</td>
+    <td style="padding: 10px;">Thank you for your help</td>
+  </tr>
+</table>
+
+<h2>تمرين المفردات</h2>
+<p>اختر الكلمة الصحيحة:</p>
+
+<div style="background-color: #fef3c7; padding: 15px; border-radius: 5px;">
+    <p>1. When you meet someone, you say ______.</p>
+    <p>أ) Goodbye</p>
+    <p>ب) Hello</p>
+    <p>ج) Thank you</p>
+</div>`;
+                    break;
+                    
+                case 'exercise':
+                    template = `<!-- قالب تمارين -->
+<h1>تمارين الدرس</h1>
+
+<div style="background-color: #eff6ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+    <h3 style="color: #1e40af;">التمرين الأول: اختر الإجابة الصحيحة</h3>
+    
+    <div style="margin: 15px 0; padding: 10px; background-color: white; border-radius: 5px;">
+        <p><strong>1. I _____ a student.</strong></p>
+        <p>□ am</p>
+        <p>□ is</p>
+        <p>□ are</p>
+    </div>
+    
+    <div style="margin: 15px 0; padding: 10px; background-color: white; border-radius: 5px;">
+        <p><strong>2. She _____ a teacher.</strong></p>
+        <p>□ am</p>
+        <p>□ is</p>
+        <p>□ are</p>
+    </div>
+</div>
+
+<div style="background-color: #f0fdf4; padding: 20px; border-radius: 10px;">
+    <h3 style="color: #15803d;">التمرين الثاني: ربط الجمل</h3>
+    
+    <p>اربط الجملة الإنجليزية مع معناها العربي:</p>
+    
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div style="width: 48%; margin-bottom: 10px;">
+            <div style="background-color: white; padding: 10px; border-radius: 5px; border: 2px solid #e5e7eb;">
+                <p>Hello</p>
+            </div>
+        </div>
+        <div style="width: 48%; margin-bottom: 10px;">
+            <div style="background-color: white; padding: 10px; border-radius: 5px; border: 2px dashed #86efac;">
+                <p>مرحباً</p>
+            </div>
+        </div>
+    </div>
+</div>`;
+                    break;
+                    
+                case 'quiz':
+                    template = `<!-- قالب اختبار -->
+<h1>اختبار قصير</h1>
+
+<div style="text-align: center; margin: 20px 0;">
+    <div style="display: inline-block; background-color: #1e3a8a; color: white; padding: 10px 20px; border-radius: 5px;">
+        الوقت: 10 دقائق | الدرجة: 10/10
+    </div>
+</div>
+
+<div style="background-color: #f8fafc; padding: 20px; border-radius: 10px; border: 2px solid #e2e8f0;">
+    <h3 style="color: #475569;">أسئلة الاختيار من متعدد</h3>
+    
+    <div style="counter-reset: question;">
+        <div style="position: relative; margin: 25px 0; padding-right: 40px;">
+            <span style="position: absolute; right: 0; top: 0; background-color: #3b82f6; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">1</span>
+            <p><strong>ما معنى كلمة "Hello"؟</strong></p>
+            <div style="margin-right: 15px;">
+                <p>□ مرحباً</p>
+                <p>□ مع السلامة</p>
+                <p>□ شكراً</p>
+                <p>□ من فضلك</p>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin: 25px 0; padding-right: 40px;">
+            <span style="position: absolute; right: 0; top: 0; background-color: #3b82f6; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">2</span>
+            <p><strong>كيف تقول "شكراً" بالإنجليزية؟</strong></p>
+            <div style="margin-right: 15px;">
+                <p>□ Hello</p>
+                <p>□ Goodbye</p>
+                <p>□ Thank you</p>
+                <p>□ Please</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <button style="background-color: #10b981; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-size: 16px; cursor: pointer;">
+        إنهاء الاختبار
+    </button>
+</div>`;
+                    break;
+            }
+            
+            // إضافة القالب إلى المحرر
+            if (editor.value) {
+                editor.value += '\n\n' + template;
+            } else {
+                editor.value = template;
+            }
+            
+            editor.focus();
+            
+            // تحديث الإحصائيات والمعاينة
+            if (window.app) {
+                window.app.updateCodeStats();
+                window.app.updateHtmlPreview();
+            }
+            
+            // إظهار رسالة
+            if (window.app) {
+                window.app.showToast('تم إضافة القالب بنجاح', 'success');
+            }
+        }
+
+        // مسح محتوى المحرر
+        function clearHtmlEditor() {
+            if (confirm('هل أنت متأكد من مسح محتوى HTML؟')) {
+                const editor = document.getElementById('html-content-input');
+                editor.value = '';
+                
+                if (window.app) {
+                    window.app.updateCodeStats();
+                    window.app.updateHtmlPreview();
+                    window.app.showToast('تم مسح المحتوى', 'info');
+                }
+            }
+        }
+
+        // ============================================
         // تشغيل التطبيق
+        // ============================================
         document.addEventListener('DOMContentLoaded', async () => {
             window.app = new EnglishTeacherSystem();
             await window.app.initialize();
