@@ -580,6 +580,18 @@
             from { top: -50px; opacity: 0; }
             to { top: 20px; opacity: 1; }
         }
+
+        /* أزرار اللايك/ديسلايك */
+        .like-btn.voted,
+        .dislike-btn.voted {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .like-btn.voted:hover,
+        .dislike-btn.voted:hover {
+            transform: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1156,7 +1168,7 @@
                     <p>منصة تعليمية متكاملة لتعليم اللغة الإنجليزية لجميع المراحل الدراسية.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p>جميع الحقوق محفوظة عمل على تطويره وإنشاؤه المبرمج إبراهيم نبيل. &copy; <span id="current-year">2026</span></p>
+                    <p>جميع الحقوق محفوظة إبراهيم نبيل &copy; <span id="current-year">2026</span></p>
                     <p id="footer-site-status"></p>
                 </div>
             </div>
@@ -1911,6 +1923,9 @@
                 const likesData = likes[lessonKey] || { likes: 0, dislikes: 0 };
                 document.getElementById('like-count').textContent = likesData.likes || 0;
                 document.getElementById('dislike-count').textContent = likesData.dislikes || 0;
+                
+                // التحقق من حالة تصويت المستخدم لهذا الدرس
+                this.checkUserVote(lessonKey);
             }
             
             async loadComments(lessonKey) {
@@ -1991,6 +2006,20 @@
                 if (!this.current.lesson) return;
                 
                 try {
+                    // إنشاء معرف فريد للمستخدم
+                    const userId = this.getUserId();
+                    const voteKey = `${this.current.lesson}_${userId}`;
+                    
+                    // التحقق إذا كان المستخدم قد صوت بالفعل
+                    if (localStorage.getItem(voteKey)) {
+                        this.showToast('لقد قمت بالتصويت بالفعل على هذا الدرس', 'warning');
+                        this.checkUserVote(this.current.lesson);
+                        return;
+                    }
+                    
+                    // حفظ التصويت محلياً
+                    localStorage.setItem(voteKey, type);
+                    
                     const likeRef = this.database.ref(`sites/${this.siteId}/likes/${this.current.lesson}`);
                     
                     likeRef.transaction((currentLikes) => {
@@ -2015,6 +2044,7 @@
                                 this.state.likes = {};
                             }
                             this.state.likes[this.current.lesson] = snapshot.val();
+                            
                             this.updateLikesDislikes(this.current.lesson);
                             this.updateStatistics();
                             this.showToast(`تم تسجيل ${type === 'like' ? 'الإعجاب' : 'عدم الإعجاب'} بنجاح`, 'success');
@@ -2024,6 +2054,48 @@
                 } catch (error) {
                     console.error('Error in like/dislike:', error);
                     this.showToast('فشل في تسجيل الإعجاب', 'error');
+                }
+            }
+            
+            // إنشاء معرف فريد للمستخدم
+            getUserId() {
+                let userId = localStorage.getItem('user_id');
+                
+                if (!userId) {
+                    // إنشاء معرف عشوائي
+                    userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                    localStorage.setItem('user_id', userId);
+                }
+                
+                return userId;
+            }
+            
+            // التحقق من تصويت المستخدم لهذا الدرس
+            checkUserVote(lessonKey) {
+                const userId = this.getUserId();
+                const voteKey = `${lessonKey}_${userId}`;
+                const userVote = localStorage.getItem(voteKey);
+                
+                const likeBtn = document.getElementById('like-btn');
+                const dislikeBtn = document.getElementById('dislike-btn');
+                
+                // إعادة تعيين الأزرار
+                likeBtn.className = 'btn btn-outline-success like-btn';
+                dislikeBtn.className = 'btn btn-outline-danger dislike-btn';
+                
+                if (userVote) {
+                    if (userVote === 'like') {
+                        likeBtn.className = 'btn btn-success like-btn voted';
+                        likeBtn.disabled = true;
+                        dislikeBtn.disabled = true;
+                    } else if (userVote === 'dislike') {
+                        dislikeBtn.className = 'btn btn-danger dislike-btn voted';
+                        likeBtn.disabled = true;
+                        dislikeBtn.disabled = true;
+                    }
+                } else {
+                    likeBtn.disabled = false;
+                    dislikeBtn.disabled = false;
                 }
             }
             
